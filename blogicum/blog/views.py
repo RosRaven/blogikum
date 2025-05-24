@@ -1,5 +1,6 @@
 from django.shortcuts import render
 
+# 0) Список «постов», из которого мы берём данные
 posts = [{
          'id': 0,         
          'location': 'Остров отчаянья',
@@ -43,14 +44,32 @@ posts = [{
      }, ]
 
 def index(request):
+    """
+    1) Главная страница: отдаём все посты.
+    render(request, template, context) 
+    — оборачивает шаблон blog/index.html в HttpResponse,
+      передавая ему context = {'posts': posts}.
+    """
     return render(request, 'blog/index.html', {'posts': posts})
 
 def post_detail(request, id):
-    # находим нужный пост по ID
+    """
+    2) Детальный просмотр одного поста:
+    Параметр `id` приходит из URL (конвертер <int:id>).
+    next(...) находит первый словарь в posts с таким id,
+    либо None, если не найден.
+    """
     post = next((p for p in posts if post['id'] == id), None)
     return render(request, 'blog/detail.html', {'post': post})
 
 def category_posts(request, category_slug):
-    # фильтруем по полю category
+    """
+    3) Публикации по категории:
+    Параметр `category_slug` — строка из URL (<slug:category_slug>).
+    Фильтруем все p['category'] == category_slug
+    и отдаём шаблону blog/category.html два ключа:
+      - 'category_slug' (для заголовка)
+      - 'posts' — список отфильтрованных постов.
+    """
     filtered = [p for p in posts if p['category'] == category_slug]
     return render(request, 'blog/category.html', {'category_slug': category_slug, 'posts': filtered})
