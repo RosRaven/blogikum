@@ -59,7 +59,7 @@ def post_detail(request, id):
     next(...) находит первый словарь в posts с таким id,
     либо None, если не найден.
     """
-    post = next((p for p in posts if post['id'] == id), None)
+    post = next((post for post in posts if post['id'] == id), None)
     return render(request, 'blog/detail.html', {'post': post})
 
 def category_posts(request, category_slug):
