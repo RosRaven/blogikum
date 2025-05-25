@@ -67,14 +67,23 @@ def post_detail(request, id):
     
     return render(request, 'blog/detail.html', {'post': post})
 
+
 def category_posts(request, category_slug):
     """
-    3) Публикации по категории:
-    Параметр `category_slug` — строка из URL (<slug:category_slug>).
-    Фильтруем все p['category'] == category_slug
-    и отдаём шаблону blog/category.html два ключа:
-      - 'category_slug' (для заголовка)
-      - 'posts' — список отфильтрованных постов.
+    Показывает страницу «Публикации в категории X».
+    Пока без списка самих постов, только название категории из URL.
     """
-    filtered = [post for post in posts if post['category'] == category_slug]
-    return render(request, 'blog/category.html', {'category_slug': category_slug, 'posts': filtered})
+    return render(request, 'blog/category.html', {'category_slug': category_slug, })
+
+
+# def category_posts(request, category_slug):
+    # """
+    # 3) Публикации по категории:
+    # Параметр `category_slug` — строка из URL (<slug:category_slug>).
+    # Фильтруем все p['category'] == category_slug
+    # и отдаём шаблону blog/category.html два ключа:
+    #   - 'category_slug' (для заголовка)
+    #   - 'posts' — список отфильтрованных постов.
+    # """
+    # filtered = [post for post in posts if post['category'] == category_slug]
+    # return render(request, 'blog/category.html', {'category_slug': category_slug, 'posts': filtered})
