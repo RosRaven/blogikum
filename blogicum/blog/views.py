@@ -50,6 +50,8 @@ def index(request):
     — оборачивает шаблон blog/index.html в HttpResponse,
       передавая ему context = {'posts': posts}.
     """
+    posts.sort(key=lambda post: post['id'], reverse=True)
+    # сортируем по id, чтобы новые были первыми
     return render(request, 'blog/index.html', {'posts': posts})
 
 def post_detail(request, id):
