@@ -15,23 +15,23 @@
     <header>
       <nav class="navbar navbar-light" style="background-color: lightskyblue">
         <div class="container">
-          <a class="navbar-brand" href="index.html">
+          <a class="navbar-brand" href="{% url 'blog:index' %}">
             <img src="{% static 'img/logo.png' %}" width="30" height="30" class="d-inline-block align-top" alt="">
             Блогикум
           </a>        
           <ul class="nav  nav-pills">
             <li class="nav-item">
-              <a class="nav-link active" href="index.html">
+              <a class="nav-link active" href="{% url 'blog:index' %}">
                 Лента записей
               </a>
             </li>
             <li class="nav-item">              
-              <a class="nav-link" href="about.html">
+              <a class="nav-link" href="{% url 'pages:about' %}">
                 О проекте
               </a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="rules.html">
+              <a class="nav-link" href="{% url 'pages:rules' %}">
                 Наши правила
               </a>
             </li>
@@ -43,63 +43,23 @@
       <div class="container py-5">
         <h1>Лента записей</h1>                        
         <!-- Перебираем в цикле все посты -->
-        <hr>
-        <article>
-          <ul>
-            <li>
-              Место: Остров отчаянья              
-            </li>
-            <li>
-              Дата: 25 октября 1659 года
-            </li>
-            <li>
-              Категория: <a href="not-my-day">not-my-day</a>
-            </li>
-          </ul>          
-          <!-- Первые 10 слов -->
-          <p>
-            Всю ночь и весь день шел дождь и дул сильный ...
-          </p>
-          <a href="detail.html">Читать полный текст</a>
-        </article>
-        <hr>
-        <article>
-          <ul>
-            <li>
-              Место: Остров отчаянья              
-            </li>
-            <li>
-              Дата: 1 октября 1659 года
-            </li>
-            <li>
-              Категория: <a href="not-my-day">not-my-day</a>
-            </li>
-          </ul>
-          <!-- Первые 10 слов -->
-          <p>
-            Проснувшись поутру, я увидел, что наш корабль сняло с мели ...
-          </p>
-          <a href="detail.html">Читать полный текст</a>
-        </article>
-        <hr>
-        <article>
-          <ul>
-            <li>
-              Место: Остров отчаянья              
-            </li>
-            <li>
-              Дата: 30 сентября 1659 года.
-            </li>
-            <li>
-              Категория: <a href="travel">travel</a>
-            </li>
-          </ul>
-          <!-- Первые 10 слов -->
-          <p>
-            Наш корабль, застигнутый в открытом море страшным штормом, потерпел крушение. ...
-          </p>
-          <a href="detail.html">Читать полный текст</a>
-        </article>                 
+         {% for post in posts %}
+          <hr>
+          <article>
+            <ul>
+              <li>Место: {{ post.location }}</li>
+              <li>Дата: {{ post.date }}</li>
+              <li>
+                Категория:
+                <a href="{% url 'blog:category' category_slug=post.category %}">
+                  {{ post.category }}
+                </a>
+              </li>
+            </ul>
+            <p>{{ post.text|truncatewords:10 }}</p>
+            <a href="{% url 'blog:post_detail' id=post.id %}">Читать полный текст</a>
+          </article>
+        {% endfor %}                
       </div>
     </main>
     <footer class="border-top text-center py-3">
