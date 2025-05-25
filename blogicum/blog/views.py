@@ -71,5 +71,5 @@ def category_posts(request, category_slug):
       - 'category_slug' (для заголовка)
       - 'posts' — список отфильтрованных постов.
     """
-    filtered = [p for p in posts if p['category'] == category_slug]
+    filtered = [post for post in posts if post['category'] == category_slug]
     return render(request, 'blog/category.html', {'category_slug': category_slug, 'posts': filtered})
