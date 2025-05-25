@@ -8,7 +8,7 @@ urlpatterns = [
     path('', views.index, name='index'),
     
     # 2) Детали поста по ID
-    path('post/<int:post_id>/', views.post_detail, name='post_detail'),
+    path('posts/<int:id>/', views.post_detail, name='post_detail'),
     
     # 3) Публикации по категории
     path('category/<slug:category_slug>/', views.category_posts, name='category_posts'),
