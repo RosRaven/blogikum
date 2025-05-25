@@ -59,7 +59,12 @@ def post_detail(request, id):
     next(...) находит первый словарь в posts с таким id,
     либо None, если не найден.
     """
+    # ищем словарь с нужным id
     post = next((post for post in posts if post['id'] == id), None)
+    if post is None:
+        # если не нашли, возвращаем 404
+        return render(request, '404.html', status=404)    
+    
     return render(request, 'blog/detail.html', {'post': post})
 
 def category_posts(request, category_slug):
