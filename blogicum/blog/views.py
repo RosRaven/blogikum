@@ -63,7 +63,7 @@ def post_detail(request, id):
     либо None, если не найден.
     """
     # ищем словарь с нужным id
-    post = next((p for p in p if p['id'] == id), None)
+    post = next((p for p in posts if p['id'] == id), None)
     if post is None:
         # если не нашли, возвращаем 404
         return render(request, '404.html', status=404)    
