@@ -57,7 +57,7 @@ def index(request):
     return render(request, "blog/index.html", {"posts": ordered_posts})
 
 
-def post_detail(request, id):
+def post_detail(request, post_id):
     """
     2) Детальный просмотр одного поста:
     Параметр `id` приходит из URL (конвертер <int:id>).
@@ -65,7 +65,7 @@ def post_detail(request, id):
     либо None, если не найден.
     """
     # ищем словарь с нужным id
-    post = next((p for p in posts if p["id"] == id), None)
+    post = next((p for p in posts if p["id"] == post_id), None)
     if post is None:
         # если не нашли, возвращаем 404
         return render(request, "404.html", status=404)
