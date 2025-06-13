@@ -1,0 +1,21 @@
+<article>
+    <ul>
+    <li>Место: {{ post.location }}</li>
+    <li>Дата: {{ post.date }}</li>
+    <li>
+        Категория:
+        <a href="{% url 'blog:category_posts' category_slug=post.category %}">
+        {{ post.category }}
+        </a>
+    </li>
+    </ul>
+    
+    {# Если хотим усечь — передаём summary=True, иначе False #}
+    {% if summary %}
+        <p>{{ post.text|truncatewords:10 }}</p>
+        <a href="{% url 'blog:post_detail' post_id=post.id %}">Читать полный текст</a>
+    {% else %}
+        <p>{{ post.text }}</p>
+    {% endif %}
+
+</article>

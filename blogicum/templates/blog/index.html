@@ -4,23 +4,10 @@
 
 {% block content %}
   <h1>Лента записей</h1>                        
-  <!-- Перебираем в цикле все посты -->
   {% for post in posts %}
     <hr>
-    <article>
-      <ul>
-        <li>Место: {{ post.location }}</li>
-        <li>Дата: {{ post.date }}</li>
-        <li>
-          Категория:
-          <a href="{% url 'blog:category_posts' category_slug=post.category %}">
-            {{ post.category }}
-          </a>
-        </li>
-      </ul>
-      <p>{{ post.text|truncatewords:10 }}</p>
-      <a href="{% url 'blog:post_detail' post_id=post.id %}">Читать полный текст</a>
-    </article>
+    {% include "blog/_post_item.html" with post=post summary=True %}
+
   {% endfor %}     
 {% endblock %}
 
