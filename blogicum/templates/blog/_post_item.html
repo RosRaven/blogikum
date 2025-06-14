@@ -1,21 +1,23 @@
 <article>
     <ul>
     <li>Место: {{ post.location }}</li>
-    <li>Дата: {{ post.date }}</li>
+    <li>Дата: {{ post.event_date_raw }}</li>
     <li>
         Категория:
-        <a href="{% url 'blog:category_posts' category_slug=post.category %}">
-        {{ post.category }}
+        <a href="{% url 'blog:category_posts' category_slug=post.category.slug %}">
+        {{ post.category.name }}
         </a>
     </li>
     </ul>
     
     {# Если хотим усечь — передаём summary=True, иначе False #}
     {% if summary %}
-        <p>{{ post.text|truncatewords:10 }}</p>
-        <a href="{% url 'blog:post_detail' post_id=post.id %}">Читать полный текст</a>
+        {# Краткий анонс #}
+        <p>{{ post.content|truncatewords:10 }}</p>
+        <a href="{% url 'blog:post_detail' slug=post.slug %}">Читать полный текст</a>
     {% else %}
-        <p>{{ post.text }}</p>
+        {# Полный текст #}
+        <p>{{ post.content }}</p>
     {% endif %}
 
 </article>
