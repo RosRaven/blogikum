@@ -2,6 +2,8 @@ from django.db import models
 from django.db.models import SET_NULL, CASCADE
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
+# from django.urls import reverse
+
 
 User = get_user_model()
 
@@ -10,9 +12,9 @@ class Category(models.Model):
     Модель категории для постов в блоге.
     """
     title = models.CharField(
+        verbose_name=_("Название категории"),
         max_length=256,
         unique=True,
-        verbose_name=_("Название"),
         help_text=_("Максимальная длина строки — 256 символов")
     )
     description = models.TextField(
@@ -22,7 +24,7 @@ class Category(models.Model):
     slug = models.SlugField(
         verbose_name=_("Идентификатор"),
         unique=True,
-        help_text=_("Уникальный слаг для URL")
+        help_text=_("Идентификатор страницы для URL; разрешены символы латиницы, цифры, дефис и подчёркивание")
     )
     is_published = models.BooleanField(
         default=True,
@@ -35,7 +37,7 @@ class Category(models.Model):
     )
 
     class Meta:
-        verbose_name = _("Категория")
+        verbose_name = _("категория")
         verbose_name_plural = _("Категории")
         
 
@@ -59,26 +61,26 @@ class Location(models.Model):
     )
 
     class Meta:
-        verbose_name = _("Местоположение")
+        verbose_name = _("местоположение")
         verbose_name_plural = _("Местоположения")
 
 
 class Post(models.Model):
     """Модель поста в блоге."""
     title = models.CharField(
-        max_length=256,
         verbose_name=_("Заголовок"),
+        max_length=256,
         help_text=_("Максимальная длина строки — 256 символов")
     )
     text = models.TextField(verbose_name=_("Текст"))
     pub_date = models.DateTimeField(
-        verbose_name=_("Дата публикации"),
-        help_text=_("Если установить в будущем — отложенная публикация")
+        verbose_name=_("Дата и время публикации"),
+        help_text=_("Если установить дату и время в будущем — можно делать отложенные публикации")
     )
     author = models.ForeignKey(
         User,
         on_delete=CASCADE,
-        verbose_name=_("Автор")
+        verbose_name=_("Автор публикации")
     )
     category = models.ForeignKey(
         Category,
@@ -105,7 +107,7 @@ class Post(models.Model):
     )
 
     class Meta:
-        verbose_name = _("Публикация")
+        verbose_name = _("публикация")
         verbose_name_plural = _("Публикации")
 
     def __str__(self):
