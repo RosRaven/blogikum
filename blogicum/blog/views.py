@@ -5,13 +5,13 @@ from .models import Post, Category
 
 def index(request):
     now = timezone.now()
-    posts = (Post.objects
+    post_list = (Post.objects
              .filter(is_published=True,
                      pub_date__lte=now,
                      category__is_published=True)
              .order_by("-pub_date")[:5]
              )
-    return render(request, "blog/index.html", {"posts": posts})
+    return render(request, "blog/index.html", {"post_list": post_list})
 
 
 def post_detail(request, post_id):
