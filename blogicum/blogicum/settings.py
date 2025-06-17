@@ -58,7 +58,9 @@ ROOT_URLCONF = "blogicum.urls"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
+        # это указывает Django искать шаблоны сначала в <project_root>/templates/
         "DIRS": [os.path.join(BASE_DIR, "templates")],
+        # это указывает Django искать шаблоны в папках приложений
         "APP_DIRS": True,
         "OPTIONS": {
             "context_processors": [
