@@ -13,7 +13,7 @@ class Category(models.Model):
     """
     # уникальное название
     title = models.CharField(
-        verbose_name=_("Название категории"),
+        verbose_name=_("Заголовок"),
         max_length=256,
         unique=True,
         help_text=_("Максимальная длина строки — 256 символов")
@@ -27,13 +27,13 @@ class Category(models.Model):
     slug = models.SlugField(
         verbose_name=_("Идентификатор"),
         unique=True,
-        help_text=_("Идентификатор страницы для URL; разрешены символы латиницы, цифры, дефис и подчёркивание")
+        help_text=_("Идентификатор страницы для URL; разрешены символы латиницы, цифры, дефис и подчёркивание.")
     )
     # флажок, можно скрыть категорию.
     is_published = models.BooleanField(
         default=True,
         verbose_name=_("Опубликовано"),
-        help_text=_("Снимите галочку, чтобы скрыть категорию")
+        help_text=_("Снимите галочку, чтобы скрыть публикацию.")
     )
     # дата-время создания записи, проставляется автоматически.
     created_at = models.DateTimeField(
@@ -88,7 +88,7 @@ class Post(models.Model):
     # дата публикации (может быть в будущем для отложенных постов)
     pub_date = models.DateTimeField(
         verbose_name=_("Дата и время публикации"),
-        help_text=_("Если установить дату и время в будущем — можно делать отложенные публикации")
+        help_text=_("Если установить дату и время в будущем — можно делать отложенные публикации.")
     )
     #  связь с пользователем, CASCADE убирает пост при удалении автора.
     author = models.ForeignKey(
