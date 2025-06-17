@@ -12,7 +12,7 @@ class Category(models.Model):
     Модель категории для постов в блоге.
     """
     # уникальное название
-    name = models.CharField(
+    title = models.CharField(
         verbose_name=_("Название категории"),
         max_length=256,
         unique=True,

@@ -5,9 +5,9 @@ from .models import Category, Location, Post
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
     #  поля, выводимые в списке записей.
-    list_display = ("name", "is_published", "created_at")
-    # автозаполнение slug из name или title
-    prepopulated_fields = {"slug": ("name",)}
+    list_display = ("title", "is_published", "created_at")
+    # автозаполнение slug из title
+    prepopulated_fields = {"slug": ("title",)}
 
     # # В CategoryAdmin можно добавить list_filter = ("is_published",) 
     # # и search_fields = ("name",), чтобы было удобнее искать.
