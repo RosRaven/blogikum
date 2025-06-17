@@ -108,7 +108,7 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/5.1/topics/i18n/
 
 # Включил русскую локализацию
-LANGUAGE_CODE = "ru"
+LANGUAGE_CODE = "ru-RU"
 # Задаёт язык по умолчанию для всего проекта.
 # Если есть переводы (gettext/.po-файлы), Django будет брать именно русские строки (ru), а не английские.
 # В шаблонах и админке по умолчанию текстовые метки (verbose_name, надписи из django.contrib.*, стандартные формы) будут на русском.
