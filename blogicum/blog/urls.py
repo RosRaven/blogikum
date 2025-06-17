@@ -8,8 +8,7 @@ urlpatterns = [
      path("", 
           views.index, 
           name="index"),
-     # Заменил int на slug, чтобы использовать слаг в URL
-     path("posts/<slug:slug>/", 
+     path("posts/<int:post_id>/", 
           views.post_detail, 
           name="post_detail"),
      path("category/<slug:category_slug>/", 
