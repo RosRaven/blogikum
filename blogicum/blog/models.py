@@ -16,7 +16,6 @@ class Category(models.Model):
     title = models.CharField(
         verbose_name=_("Заголовок"),
         max_length=256,
-        unique=True,
         help_text=_("Максимальная длина строки — 256 символов")
     )
     # произвольный текст, без ограничения длины, описывает категорию.
@@ -90,7 +89,9 @@ class Post(models.Model):
         help_text=_("Максимальная длина строки — 256 символов")
     )
     # содержание  поста
-    text = models.TextField(verbose_name=_("Текст"))
+    text = models.TextField(
+        verbose_name=_("Текст"),
+        )
     # дата публикации (может быть в будущем для отложенных постов)
     pub_date = models.DateTimeField(
         verbose_name=_("Дата и время публикации"),
@@ -105,10 +106,10 @@ class Post(models.Model):
         # SET_NULL, чтобы при удалении локации поле просто обнулялось, а пост сохранялся.
     location = models.ForeignKey(
         Location,
-        on_delete=SET_NULL,
-        verbose_name=_("Местоположение"),
         null=True,
-        blank=True
+        blank=True,
+        on_delete=SET_NULL,
+        verbose_name=_("Местоположение")
     )
     # CASCADE, но null=True (хотя тесты требуют именно null=True, blank=False).
     category = models.ForeignKey(
