@@ -1,6 +1,7 @@
 from django.db import models
 from django.db.models import SET_NULL, CASCADE
-from django.contrib.auth import get_user_model # берёт ту модель пользователя, что указана в AUTH_USER_MODEL  чтобы Post.author ссылался на ваш User-класс.
+# Ссылаемся на модель пользователя, чтобы использовать её в ForeignKey.
+from django.contrib.auth import get_user_model 
 from django.utils.translation import gettext_lazy as _ # делает метки и подсказки переводимыми.
 # from django.urls import reverse
 
@@ -96,15 +97,7 @@ class Post(models.Model):
         on_delete=CASCADE,
         verbose_name=_("Автор публикации")
     )
-    # CASCADE, но null=True (хотя тесты требуют именно null=True, blank=False).
-    category = models.ForeignKey(
-        Category,
-        null=True,
-        blank=False,
-        on_delete=CASCADE,
-        verbose_name=_("Категория")
-    )   
-    # SET_NULL, чтобы при удалении локации поле просто обнулялось, а пост сохранялся.
+        # SET_NULL, чтобы при удалении локации поле просто обнулялось, а пост сохранялся.
     location = models.ForeignKey(
         Location,
         on_delete=SET_NULL,
@@ -112,18 +105,26 @@ class Post(models.Model):
         null=True,
         blank=True
     )
-    # дата создания
-    created_at = models.DateTimeField(
-        auto_now_add=True,
-        verbose_name=_("Добавлено")
+    # CASCADE, но null=True (хотя тесты требуют именно null=True, blank=False).
+    category = models.ForeignKey(
+        Category,
+        null=True,
+        blank=False,
+        on_delete=SET_NULL,
+        verbose_name=_("Категория")
     )
     # флаг публикации, по умолчанию True, можно скрыть пост.
     is_published = models.BooleanField(
         default=True,
         verbose_name=_("Опубликовано"),
         help_text=_("Снимите галочку, чтобы скрыть публикацию")
+    )   
+    # дата создания
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name=_("Добавлено")
     )
-
+    
     class Meta:
         # переводимые названия модели в единственном и множественном числе.
         verbose_name = _("публикация")
