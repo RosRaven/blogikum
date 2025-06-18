@@ -47,6 +47,8 @@ class Category(models.Model):
         verbose_name = _("категория")
         verbose_name_plural = _("Категории")
         
+    def __str__(self):
+        return self.title
 
 class Location(models.Model):
     """
@@ -74,6 +76,9 @@ class Location(models.Model):
         # переводы названий модели в единственном и множественном числе.
         verbose_name = _("местоположение")
         verbose_name_plural = _("Местоположения")
+
+    def __str__(self):
+        return self.name
 
 
 class Post(models.Model):
