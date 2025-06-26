@@ -4,9 +4,11 @@ from django.db.models import SET_NULL, CASCADE
 from django.contrib.auth import get_user_model 
 from django.utils.translation import gettext_lazy as _ # делает метки и подсказки переводимыми.
 # from django.urls import reverse
-
+# Получаем модель пользователя, которая используется в проекте.
+# Это позволяет использовать кастомную модель пользователя, если она есть.
 
 User = get_user_model()
+
 
 class Category(models.Model):
     """
@@ -48,6 +50,7 @@ class Category(models.Model):
         
     def __str__(self):
         return self.title
+
 
 class Location(models.Model):
     """
