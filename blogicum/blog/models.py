@@ -2,15 +2,15 @@
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.db.models import CASCADE, SET_NULL
-from django.utils.translation import \
-    gettext_lazy as _  # делает метки и подсказки переводимыми.
+from django.utils.translation import gettext_lazy as _  # делает метки и подсказки переводимыми.
+
+from .constants import TITLE_MAX_LENGTH, NAME_MAX_LENGTH
 
 # from django.urls import reverse
 # Получаем модель пользователя, которая используется в проекте.
 # Это позволяет использовать кастомную модель пользователя, если она есть.
 
 User = get_user_model()
-
 
 class Category(models.Model):
     """
@@ -19,8 +19,9 @@ class Category(models.Model):
     # уникальное название
     title = models.CharField(
         verbose_name=_("Заголовок"),
-        max_length=256,
-        help_text=_("Максимальная длина строки — 256 символов")
+        max_length=TITLE_MAX_LENGTH,
+        help_text=_("Максимальная длина строки — %{length}d символов", 
+                    ) % {"length": TITLE_MAX_LENGTH}
     )
     # произвольный текст, без ограничения длины, описывает категорию.
     description = models.TextField(
@@ -60,9 +61,10 @@ class Location(models.Model):
     """
     # название локации.
     name = models.CharField(
-        max_length=256,
+        max_length=NAME_MAX_LENGTH,
         verbose_name=_("Название места"),
-        help_text=_("Максимальная длина строки — 256 символов")
+        help_text=_("Максимальная длина строки — {length} символов"
+                    ) % {"length": NAME_MAX_LENGTH}
     )
     # флаг видимости
     is_published = models.BooleanField(
@@ -90,8 +92,9 @@ class Post(models.Model):
     # заголовок поста
     title = models.CharField(
         verbose_name=_("Заголовок"),
-        max_length=256,
-        help_text=_("Максимальная длина строки — 256 символов")
+        max_length=TITLE_MAX_LENGTH,
+        help_text=_("Максимальная длина строки — {length} символов"
+                    ) % {"length": TITLE_MAX_LENGTH}
     )
     # содержание  поста
     text = models.TextField(
