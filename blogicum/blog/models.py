@@ -1,8 +1,10 @@
-from django.db import models
-from django.db.models import SET_NULL, CASCADE
 # Ссылаемся на модель пользователя, чтобы использовать её в ForeignKey.
-from django.contrib.auth import get_user_model 
-from django.utils.translation import gettext_lazy as _ # делает метки и подсказки переводимыми.
+from django.contrib.auth import get_user_model
+from django.db import models
+from django.db.models import CASCADE, SET_NULL
+from django.utils.translation import \
+    gettext_lazy as _  # делает метки и подсказки переводимыми.
+
 # from django.urls import reverse
 # Получаем модель пользователя, которая используется в проекте.
 # Это позволяет использовать кастомную модель пользователя, если она есть.

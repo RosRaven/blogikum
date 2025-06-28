@@ -1,6 +1,6 @@
 import pytest
 
-from tests.fixtures.fixture_data import N_TEST_POSTS, N_POSTS_LIMIT
+from tests.fixtures.fixture_data import N_POSTS_LIMIT, N_TEST_POSTS
 
 pytestmark = [
     pytest.mark.django_db,
