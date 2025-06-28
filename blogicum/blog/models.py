@@ -12,7 +12,29 @@ from .constants import TITLE_MAX_LENGTH, NAME_MAX_LENGTH
 
 User = get_user_model()
 
-class Category(models.Model):
+class AbstractBaseModel(models.Model):
+    """
+    Базовая модель для всех моделей блога.
+    Содержит общие поля и методы, которые могут быть переопределены в дочерних моделях.
+    """
+    # флажок, можно скрыть категорию.
+    is_published = models.BooleanField(
+        default=True,
+        verbose_name=_("Опубликовано"),
+        help_text=_("Снимите галочку, чтобы скрыть публикацию.")
+    )
+    # дата-время создания записи, проставляется автоматически.
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+        verbose_name=_("Добавлено")
+    )
+    
+    class Meta:
+        # Эта модель не будет создана в базе данных, но её поля будут доступны в дочерних моделях.
+        abstract = True
+        
+        
+class Category(AbstractBaseModel):
     """
     Модель категории для постов в блоге.
     """
@@ -20,7 +42,7 @@ class Category(models.Model):
     title = models.CharField(
         verbose_name=_("Заголовок"),
         max_length=TITLE_MAX_LENGTH,
-        help_text=_("Максимальная длина строки — %{length}d символов", 
+        help_text=_("Максимальная длина строки — %(length)d символов", 
                     ) % {"length": TITLE_MAX_LENGTH}
     )
     # произвольный текст, без ограничения длины, описывает категорию.
@@ -34,17 +56,6 @@ class Category(models.Model):
         unique=True,
         help_text=_("Идентификатор страницы для URL; разрешены символы латиницы, цифры, дефис и подчёркивание.")
     )
-    # флажок, можно скрыть категорию.
-    is_published = models.BooleanField(
-        default=True,
-        verbose_name=_("Опубликовано"),
-        help_text=_("Снимите галочку, чтобы скрыть публикацию.")
-    )
-    # дата-время создания записи, проставляется автоматически.
-    created_at = models.DateTimeField(
-        auto_now_add=True,
-        verbose_name=_("Добавлено")
-    )
 
     class Meta:
         # переводимые названия модели в единственном и множественном числе.
@@ -55,7 +66,7 @@ class Category(models.Model):
         return self.title
 
 
-class Location(models.Model):
+class Location(AbstractBaseModel):
     """
     Модель локации для постов в блоге.
     """
@@ -63,19 +74,8 @@ class Location(models.Model):
     name = models.CharField(
         max_length=NAME_MAX_LENGTH,
         verbose_name=_("Название места"),
-        help_text=_("Максимальная длина строки — {length} символов"
+        help_text=_("Максимальная длина строки — %(length)d символов"
                     ) % {"length": NAME_MAX_LENGTH}
-    )
-    # флаг видимости
-    is_published = models.BooleanField(
-        default=True,
-        verbose_name=_("Опубликовано"),
-        help_text=_("Снимите галочку, чтобы скрыть локацию")
-    )
-    # автоматически установленная дата создания
-    created_at = models.DateTimeField(
-        auto_now_add=True,
-        verbose_name=_("Добавлено")
     )
 
     class Meta:
@@ -87,13 +87,13 @@ class Location(models.Model):
         return self.name
 
 
-class Post(models.Model):
+class Post(AbstractBaseModel):
     """Модель поста в блоге."""
     # заголовок поста
     title = models.CharField(
         verbose_name=_("Заголовок"),
         max_length=TITLE_MAX_LENGTH,
-        help_text=_("Максимальная длина строки — {length} символов"
+        help_text=_("Максимальная длина строки — %(length)d символов"
                     ) % {"length": TITLE_MAX_LENGTH}
     )
     # содержание  поста
@@ -126,17 +126,6 @@ class Post(models.Model):
         blank=False,
         on_delete=SET_NULL,
         verbose_name=_("Категория")
-    )
-    # флаг публикации, по умолчанию True, можно скрыть пост.
-    is_published = models.BooleanField(
-        default=True,
-        verbose_name=_("Опубликовано"),
-        help_text=_("Снимите галочку, чтобы скрыть публикацию")
-    )   
-    # дата создания
-    created_at = models.DateTimeField(
-        auto_now_add=True,
-        verbose_name=_("Добавлено")
     )
     
     class Meta:
