@@ -4,28 +4,16 @@ from django.utils import timezone
 from .constants import POSTS_ON_MAIN
 from .models import Post, Category
 
-def get_posts(type_request, category=None):
-    if type_request == "main":
-        post_list = (Post.objects
-                .filter(is_published=True,
-                        pub_date__lte=timezone.now(),
-                        category__is_published=True)
-                .order_by("-pub_date")[:POSTS_ON_MAIN]
-                )
-    elif type_request == "category":
-        post_list = (Post.objects
-                .filter(is_published=True,
-                        pub_date__lte=timezone.now(),
-                        category=category
-                        )
-                .order_by("-pub_date")
-                )
-
-    return post_list
+def _get_base_queryset():
+    return Post.objects.filter(
+            is_published=True,
+            pub_date__lte=timezone.now(),
+            category__is_published=True
+            ).order_by("-pub_date")
 
 
 def index(request):
-    post_list = get_posts("main")
+    post_list = _get_base_queryset()[:POSTS_ON_MAIN]
 
     # post_list = (Post.objects
     #          .filter(is_published=True,
@@ -61,7 +49,7 @@ def category_posts(request, category_slug):
             )
 
     # 2) Формируем QuerySet её постов по тем же правилам, что и на главной
-    post_list = get_posts(type_request="category", category=category)
+    post_list = _get_base_queryset().filter(category=category)
     
     # post_list = (
     #     Post.objects
