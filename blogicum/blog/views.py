@@ -5,10 +5,9 @@ from .models import Post, Category
 
 
 def index(request):
-    now = timezone.now()
     post_list = (Post.objects
              .filter(is_published=True,
-                     pub_date__lte=now,
+                     pub_date__lte=timezone.now(),
                      category__is_published=True)
              .order_by("-pub_date")[:5]
              )
@@ -16,7 +15,6 @@ def index(request):
 
 
 def post_detail(request, post_id):
-    now = timezone.now()
     #  вернёт 404, если не найдёт запись.
     post = get_object_or_404(
         # ищем по id и сразу проверяем флаги и дату
@@ -24,15 +22,13 @@ def post_detail(request, post_id):
             .filter(
                 id=post_id,
                 is_published=True,
-                pub_date__lte=now,
+                pub_date__lte=timezone.now(),
                 category__is_published=True)
             )
     return render(request, "blog/detail.html", {"post": post})
 
 
 def category_posts(request, category_slug):
-    now = timezone.now()
-
     # 1) Достаём категорию или 404, если её нет или она не опубликована
     category = get_object_or_404(
         Category.objects
@@ -47,7 +43,7 @@ def category_posts(request, category_slug):
         Post.objects
             .filter(category=category,
                     is_published=True,
-                    pub_date__lte=now,
+                    pub_date__lte=timezone.now(),
                     )
             .order_by("-pub_date")
             )
