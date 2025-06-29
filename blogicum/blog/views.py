@@ -4,14 +4,35 @@ from django.utils import timezone
 from .constants import POSTS_ON_MAIN
 from .models import Post, Category
 
+def get_posts(type_request, category=None):
+    if type_request == "main":
+        post_list = (Post.objects
+                .filter(is_published=True,
+                        pub_date__lte=timezone.now(),
+                        category__is_published=True)
+                .order_by("-pub_date")[:POSTS_ON_MAIN]
+                )
+    elif type_request == "category":
+        post_list = (Post.objects
+                .filter(is_published=True,
+                        pub_date__lte=timezone.now(),
+                        category=category
+                        )
+                .order_by("-pub_date")
+                )
+
+    return post_list
+
 
 def index(request):
-    post_list = (Post.objects
-             .filter(is_published=True,
-                     pub_date__lte=timezone.now(),
-                     category__is_published=True)
-             .order_by("-pub_date")[:POSTS_ON_MAIN]
-             )
+    post_list = get_posts("main")
+
+    # post_list = (Post.objects
+    #          .filter(is_published=True,
+    #                  pub_date__lte=timezone.now(),
+    #                  category__is_published=True)
+    #          .order_by("-pub_date")[:POSTS_ON_MAIN]
+    #          )
     return render(request, "blog/index.html", {"post_list": post_list})
 
 
@@ -40,14 +61,16 @@ def category_posts(request, category_slug):
             )
 
     # 2) Формируем QuerySet её постов по тем же правилам, что и на главной
-    post_list = (
-        Post.objects
-            .filter(category=category,
-                    is_published=True,
-                    pub_date__lte=timezone.now(),
-                    )
-            .order_by("-pub_date")
-            )
+    post_list = get_posts(type_request="category", category=category)
+    
+    # post_list = (
+    #     Post.objects
+    #         .filter(category=category,
+    #                 is_published=True,
+    #                 pub_date__lte=timezone.now(),
+    #                 )
+    #         .order_by("-pub_date")
+    #         )
     
     # 3) Отдаём и категорию, и список в ключах именно "category" и "post_list"
     return render(

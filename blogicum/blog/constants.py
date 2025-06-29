@@ -5,4 +5,4 @@ TITLE_MAX_LENGTH = 256
 NAME_MAX_LENGTH = 256
 
 # Количество постов на главной странице.
-POSTS_ON_MAIN = 10
+POSTS_ON_MAIN = 5
