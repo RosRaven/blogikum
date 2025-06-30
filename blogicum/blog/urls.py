@@ -8,6 +8,9 @@ urlpatterns = [
      path("", 
           views.index, 
           name="index"),
+     path("posts/new/", 
+          views.post_create,
+          name="post_create"),
      path("posts/<int:post_id>/", 
           views.post_detail, 
           name="post_detail"),
@@ -15,3 +18,4 @@ urlpatterns = [
           views.category_posts, 
           name="category_posts"),
 ]
+

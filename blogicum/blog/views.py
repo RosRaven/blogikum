@@ -64,7 +64,7 @@ def post_create(request):
             # сохраняем в БД.
             post.save()
             # после успешного создания отправляем пользователя на страницу с детальным просмотром.
-            return redirect('post_detail', pk=post.pk)
+            return redirect('blog:post_detail', post_id=post.pk)
     else:
         # Если это не POST (т. е. GET, когда пользователь впервые открыл страницу), создаём пустую форму
         form = PostForm()
