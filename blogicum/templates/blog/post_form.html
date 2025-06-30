@@ -1,0 +1,58 @@
+<!-- наследуем общий шаблон с шапкой/подвалом. -->
+{% extends "base.html" %}
+<!-- здесь вставляем основное содержимое страницы. -->
+{% block content %}
+  <!-- В заголовке проверяем: если у формы есть instance.pk (т. е. мы редактируем уже существующий объект), пишем «Редактировать», иначе «Создать». -->
+  <h1>{% if form.instance.pk %}Редактировать{% else %}Создать{% endif %} публикацию</h1>
+
+  <!-- отправляем данные методом POST (т. к. меняем состояние на сервере).
+   enctype="multipart/form-data" — нужно, если у формы есть загрузка файлов. -->
+  <form method="post" enctype="multipart/form-data">
+    <!-- {% csrf_token %} — тег, вставляющий скрытое поле с CSRF-токеном: без него Django отклонит POST-запрос. -->
+    {% csrf_token %}
+    <!-- {{ form.non_field_errors }} — показывает ошибки, не относящиеся к конкретному полю (например, при clean() всей формы). -->
+    {{ form.non_field_errors }}
+
+    <div>
+      <!-- form.title.label_tag — генерирует <label> с текстом из labels. -->
+      {{ form.title.label_tag }}<br>
+      <!-- form.title — сам HTML-виджет поля (<input> или <textarea>). -->
+      {{ form.title }}<br>
+      <!-- form.title.errors — если при валидации было выброшено исключение, здесь покажутся сообщения об ошибках. -->
+      {{ form.title.errors }}
+    </div>
+
+    <div>
+      {{ form.text.label_tag }}<br>
+      {{ form.text }}<br>
+      {{ form.text.errors }}
+    </div>
+
+    <div>
+      {{ form.pub_date.label_tag }}<br>
+      {{ form.pub_date }}<br>
+      {{ form.pub_date.errors }}
+    </div>
+
+    <div>
+      {{ form.location.label_tag }}<br>
+      {{ form.location }}<br>
+      {{ form.location.errors }}
+    </div>
+
+    <div>
+      {{ form.category.label_tag }}<br>
+      {{ form.category }}<br>
+      {{ form.category.errors }}
+    </div>
+
+    <div>
+      {{ form.is_published.label_tag }} {{ form.is_published }}<br>
+      {{ form.is_published.errors }}
+    </div>
+
+    <!-- Кнопка отправки формы. -->
+    <button type="submit">Сохранить</button>
+  </form>
+{% endblock %}
+<!-- Закрываем форму и блок контента. -->

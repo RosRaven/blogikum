@@ -1,7 +1,9 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
+# render позволяет отдать HTML-шаблон + контекст, redirect — перенаправить после успешного сохранения.
 from django.utils import timezone
 
 from .constants import POSTS_ON_MAIN
+from .forms import PostForm
 from .models import Post, Category
 
 def _get_base_queryset():
@@ -48,3 +50,22 @@ def category_posts(request, category_slug):
             "post_list": post_list
         }
     )
+
+
+def post_create(request):
+    if request.method == 'POST':
+        form = PostForm(request.POST, request.FILES)  # request.FILES для будущих полей файлов
+        # запускает всю валидацию: поля + методы clean_….
+        if form.is_valid():
+            # создаёт объект Post, но не сохраняет в БД сразу — чтобы мы успели что-то до-настроить.
+            post = form.save(commit=False)
+            # проставляем автора (твоё приложение раньше не включало это поле в форму).
+            post.author = request.user
+            # сохраняем в БД.
+            post.save()
+            # после успешного создания отправляем пользователя на страницу с детальным просмотром.
+            return redirect('post_detail', pk=post.pk)
+    else:
+        # Если это не POST (т. е. GET, когда пользователь впервые открыл страницу), создаём пустую форму
+        form = PostForm()
+    return render(request, 'blog/post_form.html', {'form': form})
