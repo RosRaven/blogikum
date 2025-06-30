@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, get_object_or_404, redirect
 # render позволяет отдать HTML-шаблон + контекст, redirect — перенаправить после успешного сохранения.
 from django.utils import timezone
@@ -52,20 +53,26 @@ def category_posts(request, category_slug):
     )
 
 
+# не даёт анонимным пользователям попасть на страницу создания.
+@login_required
 def post_create(request):
+    # 1) При GET просто показываем пустую форму
+    if request.method == "GET":
+        form = PostForm()
+        return render(request, 'blog/post_form.html', {"form": form})
+
+    # 2) При POST обрабатываем отправленные данные
     if request.method == 'POST':
         form = PostForm(request.POST, request.FILES)  # request.FILES для будущих полей файлов
-        # запускает всю валидацию: поля + методы clean_….
-        if form.is_valid():
-            # создаёт объект Post, но не сохраняет в БД сразу — чтобы мы успели что-то до-настроить.
-            post = form.save(commit=False)
-            # проставляем автора (твоё приложение раньше не включало это поле в форму).
-            post.author = request.user
-            # сохраняем в БД.
-            post.save()
-            # после успешного создания отправляем пользователя на страницу с детальным просмотром.
-            return redirect('blog:post_detail', post_id=post.pk)
-    else:
-        # Если это не POST (т. е. GET, когда пользователь впервые открыл страницу), создаём пустую форму
-        form = PostForm()
-    return render(request, 'blog/post_form.html', {'form': form})
+        # запускает все проверки (clean_… и встроенные).
+        if not form.is_valid():
+            # Если форма не прошла валидацию, снова рендерим шаблон с ошибками
+            return render(request, 'blog/post_form.html', {'form': form})
+
+    # 3) Сохраняем объект, но ещё не в БД, чтобы проставить автора
+    post = form.save(commit=False)
+    post.author = request.user
+    post.save()
+
+    # 4) После успешного сохранения — редирект на детальный просмотр
+    return redirect('blog:post_detail', post_id=post.pk)
