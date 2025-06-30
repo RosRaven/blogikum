@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% block content %}
+  <h1>Вход</h1>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.non_field_errors }}
+    <div>
+      {{ form.username.label_tag }}<br>
+      {{ form.username }}<br>
+      {{ form.username.errors }}
+    </div>
+    <div>
+      {{ form.password.label_tag }}<br>
+      {{ form.password }}<br>
+      {{ form.password.errors }}
+    </div>
+    <button type="submit">Войти</button>
+  </form>
+{% endblock %}

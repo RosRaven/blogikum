@@ -16,12 +16,31 @@ Including another URLconf
 """
 
 from django.contrib import admin
-from django.urls import include, path
+from django.contrib.auth.views import LogoutView
+from django.urls import include, path, reverse_lazy
+from django.views.generic import RedirectView
+
+from blog.views import SignUpView, custom_logout
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    # сюда попадают /accounts/login/, /accounts/logout/, /accounts/password_change/ и т. д.
+    
+    # регистрация (если ты её сделаешь отдельным CBV)
+    path('accounts/signup/', SignUpView.as_view(), name='signup'),
+
+    # наш упрощённый logout
+    path("accounts/logout/", custom_logout, name="logout"),
+
+    path("accounts/", include("django.contrib.auth.urls")),
+    
+    path(
+        "accounts/profile/",
+        RedirectView.as_view(url=reverse_lazy('blog:index')),
+        name="profile"),
+
     # главная лента из приложения blog
     path("", include("blog.urls", namespace="blog")),
     # статические страницы из приложения pages
     path("pages/", include("pages.urls", namespace="pages")),
-]
+    ]
