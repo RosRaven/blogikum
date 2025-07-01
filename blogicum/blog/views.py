@@ -1,8 +1,8 @@
+from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth import logout
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, get_object_or_404, redirect
-# render позволяет отдать HTML-шаблон + контекст, redirect — перенаправить после успешного сохранения.
 from django.utils import timezone
 from django.urls import reverse_lazy
 from django.views.generic import CreateView
