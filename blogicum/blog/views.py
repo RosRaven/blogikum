@@ -1,11 +1,14 @@
 from django.contrib.auth import logout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.forms import UserCreationForm
+# автоматически редиректит анонимов на страницу логина.
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render, get_object_or_404, redirect
 from django.utils import timezone
+# для отложенного вычисления success_url.
 from django.urls import reverse_lazy
-from django.views.generic import CreateView
+# готовая CBV для страниц создания объектов.
+from django.views.generic import CreateView 
 
 from .constants import POSTS_ON_MAIN
 from .forms import PostForm
@@ -41,19 +44,6 @@ def post_detail(request, post_id):
     return render(request, "blog/detail.html", {"post": post})
 
 
-# def post_detail(request, post_id):
-#     post = get_object_or_404(
-#         Post.objects
-#             .filter(
-#                 id=post_id,
-#                 is_published=True,
-#                 pub_date__lte=timezone.now(),
-#                 category__is_published=True)
-#             )
-    
-#     return render(request, "blog/detail.html", {"post": post})
-
-
 def category_posts(request, category_slug):
     category = get_object_or_404(
         Category.objects
@@ -72,6 +62,32 @@ def category_posts(request, category_slug):
             "post_list": post_list
         }
     )
+
+
+# LoginRequiredMixin — проверяет, что пользователь залогинен, 
+# и если нет, автоматически перенаправляет на страницу логина.
+# CreateView — готовый generic view, который сам разберёт GET/POST, валидацию формы и сохранение объекта.
+# порядок миксинов имеет значение — LoginRequiredMixin должен стоять до CreateView.
+class PostCreateView(LoginRequiredMixin, CreateView):
+    #  указываем, какой модели соответствует эта view.
+    model = Post
+    # наша ModelForm
+    form_class = PostForm
+    # шаблон, где рендерится форма.
+    template_name = "blog/post_form.html"
+    # куда уезжаем после удачного сохранения.
+    success_url = reverse_lazy("blog:index")
+
+    # def get_success_url(self):
+    #     # уезжать на страницу детали, вместо index,
+    #     return reverse_lazy("blog:post_detail", kwargs={"post_id": self.object.pk})
+
+    def form_valid(self, form):
+        # вызывается, когда форма прошла валидацию
+        # ещё не сохранённый объект Post.
+        form.instance.author = self.request.user
+        # Проставляем нужное поле и кидаем обратно в логику CreateView, где он сохранится и выполнится редирект.
+        return super().form_valid(form)
 
 
 # не даёт анонимным пользователям попасть на страницу создания.
