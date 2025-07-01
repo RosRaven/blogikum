@@ -20,7 +20,7 @@ def _get_base_queryset():
             is_published=True,
             pub_date__lte=timezone.now(),
             category__is_published=True
-            ).order_by("-pub_date")
+            ).order_by("-pub_date", "-pk")
 
 
 def index(request):
