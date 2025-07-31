@@ -12,10 +12,9 @@ from .constants import TITLE_MAX_LENGTH, NAME_MAX_LENGTH
 
 User = get_user_model()
 
-class AbstractBaseModel(models.Model):
+class TimestampedModel(models.Model):
     """
-    Базовая модель для всех моделей блога.
-    Содержит общие поля и методы, которые могут быть переопределены в дочерних моделях.
+    Абстрактная модель: добавляет флаги публикации и отображения на главной.
     """
     # флажок, можно скрыть категорию.
     is_published = models.BooleanField(
@@ -32,9 +31,9 @@ class AbstractBaseModel(models.Model):
     class Meta:
         # Эта модель не будет создана в базе данных, но её поля будут доступны в дочерних моделях.
         abstract = True
-        
-        
-class Category(AbstractBaseModel):
+
+
+class Category(TimestampedModel):
     """
     Модель категории для постов в блоге.
     """
@@ -66,7 +65,7 @@ class Category(AbstractBaseModel):
         return self.title
 
 
-class Location(AbstractBaseModel):
+class Location(TimestampedModel):
     """
     Модель локации для постов в блоге.
     """
@@ -87,7 +86,7 @@ class Location(AbstractBaseModel):
         return self.name
 
 
-class Post(AbstractBaseModel):
+class Post(TimestampedModel):
     """Модель поста в блоге."""
     # заголовок поста
     title = models.CharField(
