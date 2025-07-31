@@ -3,14 +3,7 @@ from django.utils import timezone
 
 from .constants import POSTS_ON_MAIN
 from .models import Post, Category
-
-def _get_base_queryset():
-    return Post.objects.filter(
-            is_published=True,
-            pub_date__lte=timezone.now(),
-            category__is_published=True
-            ).order_by("-pub_date")
-
+from .utils import _get_base_queryset
 
 def index(request):
     post_list = _get_base_queryset()[:POSTS_ON_MAIN]
