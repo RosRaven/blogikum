@@ -4,7 +4,7 @@ from django.db import models
 from django.db.models import CASCADE, SET_NULL
 from django.utils.translation import gettext_lazy as _  # делает метки и подсказки переводимыми.
 
-from .constants import TITLE_MAX_LENGTH, NAME_MAX_LENGTH
+from .constants import TITLE_MAX_LENGTH, NAME_MAX_LENGTH, TITLE_REPL_MAX_LENGTH, NAME_REPL_MAX_LENGTH
 
 # from django.urls import reverse
 # Получаем модель пользователя, которая используется в проекте.
@@ -62,7 +62,7 @@ class Category(TimestampedModel):
         verbose_name_plural = _("Категории")
         
     def __str__(self):
-        return self.title
+        return self.title[:TITLE_REPL_MAX_LENGTH]
 
 
 class Location(TimestampedModel):
@@ -83,7 +83,7 @@ class Location(TimestampedModel):
         verbose_name_plural = _("Местоположения")
 
     def __str__(self):
-        return self.name
+        return self.name[:NAME_REPL_MAX_LENGTH]
 
 
 class Post(TimestampedModel):
@@ -133,5 +133,5 @@ class Post(TimestampedModel):
         verbose_name_plural = _("Публикации")
 
     def __str__(self):
-        return self.title
+        return self.title[:TITLE_REPL_MAX_LENGTH]
 
