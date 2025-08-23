@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     # наши приложения
     "pages.apps.PagesConfig",
     "blog.apps.BlogConfig",
+    "django_bootstrap5",
 ]
 
 MIDDLEWARE = [
