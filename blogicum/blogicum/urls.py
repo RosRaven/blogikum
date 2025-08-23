@@ -25,3 +25,7 @@ urlpatterns = [
     # статические страницы из приложения pages
     path("pages/", include("pages.urls", namespace="pages")),
 ]
+
+handler404 = "pages.views.page_not_found"
+handler500 = "pages.views.server_error"
+handler403 = "pages.views.csrf_failure"

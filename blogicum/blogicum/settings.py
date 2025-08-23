@@ -23,9 +23,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent # указывает на вн
 SECRET_KEY = "django-insecure-=zo!%09+_t6#00jsvo7pdz$0sy)g%=0xc+m!&)47l^9yx%kwad"
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# DEBUG = True
 
-ALLOWED_HOSTS = []
+# ALLOWED_HOSTS = []
+
+# Django показывает кастомные 404/500/403 только при DEBUG=False. На время проверки:
+DEBUG = False
+
+ALLOWED_HOSTS = ["127.0.0.1", "localhost", "testserver"] # Не уверен что это нужно
 
 
 # Application definition
@@ -142,3 +147,5 @@ STATIC_URL = "static/"
 STATICFILES_DIRS = [BASE_DIR / "static"]
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+CSRF_FAILURE_VIEW = "pages.views.csrf_failure"
