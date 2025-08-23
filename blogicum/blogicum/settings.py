@@ -10,12 +10,10 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/5.1/ref/settings/
 """
 
-import os
-
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent # указывает на внешнюю папку blogicum/
 
 
 # Quick-start development settings - unsuitable for production
@@ -60,7 +58,7 @@ TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
         # это указывает Django искать шаблоны сначала в <project_root>/templates/
-        "DIRS": [os.path.join(BASE_DIR, "templates")],
+        "DIRS": [BASE_DIR / "templates"],
         # это указывает Django искать шаблоны в папках приложений
         "APP_DIRS": True,
         "OPTIONS": {
@@ -119,14 +117,15 @@ USE_I18N = True
 # Включает систему Internationalization, т.е. возможность перевода строк.
 # Если True, Django активирует механизмы gettext_lazy, загрузку .mo-файлов из папки locale/ и разбирает конструкции {% trans %} в шаблонах.
 # Если False, весь переводный код игнорируется, и на сайте останутся «сырье» (обычно английские) строк
-USE_L10N = True
-# Включает Localization — форматирование данных под локаль.
-# Даты, числа и валюты будут автоматически выводиться в том виде, как это принято в выбранной локали (например, 31.12.2025 вместо 2025-12-31, разделитель дробной части запятой и т.д.).
-# При False используется единый формат (согласно внутренним настройкам Django), независимо от языка.
+
+# # USE_L10N в Django 5 уже не используется (локализация форматов всегда включена). 
+# # Удали строку USE_L10N = True.
+# USE_L10N = True
+# # Включает Localization — форматирование данных под локаль.
+# # Даты, числа и валюты будут автоматически выводиться в том виде, как это принято в выбранной локали (например, 31.12.2025 вместо 2025-12-31, разделитель дробной части запятой и т.д.).
+# # При False используется единый формат (согласно внутренним настройкам Django), независимо от языка.
 
 TIME_ZONE = "UTC"
-
-USE_I18N = True
 
 USE_TZ = True
 
@@ -139,8 +138,6 @@ STATIC_URL = "static/"
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, "static"),
-]
+STATICFILES_DIRS = [BASE_DIR / "static"]
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
