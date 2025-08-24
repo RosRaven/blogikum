@@ -21,3 +21,12 @@ def server_error(request):
 
 def csrf_failure(request, reason=""):
     return render(request, "pages/403csrf.html", {"reason": reason}, status=403)
+
+
+# простая заглушка, чтобы шаблоны могли «развернуть» ссылку registration:
+def registration(request):
+    return render(request, "pages/registration.html")
+
+# временная заглушка для проверки ошибки 500
+def boom(request):
+    raise Exception("boom")
