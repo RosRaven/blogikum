@@ -13,7 +13,11 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
-BASE_DIR = Path(__file__).resolve().parent.parent # указывает на внешнюю папку blogicum/
+BASE_DIR = Path(__file__).resolve().parent.parent 
+# указывает на внешнюю папку blogicum/
+# корень проекта (где manage.py)
+
+TEMPLATES_DIR = BASE_DIR / "templates"
 
 
 # Quick-start development settings - unsuitable for production
@@ -24,12 +28,11 @@ SECRET_KEY = "django-insecure-=zo!%09+_t6#00jsvo7pdz$0sy)g%=0xc+m!&)47l^9yx%kwad
 
 # SECURITY WARNING: don't run with debug turned on in production!
 # DEBUG = True
-
 # ALLOWED_HOSTS = []
 
-# Django показывает кастомные 404/500/403 только при DEBUG=False. На время проверки:
+# Django показывает кастомные 404/500/403 только при DEBUG=False. 
+# На время проверки:
 DEBUG = False
-
 ALLOWED_HOSTS = ["127.0.0.1", "localhost", "testserver"] # Не уверен что это нужно
 
 
@@ -64,7 +67,8 @@ TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
         # это указывает Django искать шаблоны сначала в <project_root>/templates/
-        "DIRS": [BASE_DIR / "templates"],
+        # "DIRS": [BASE_DIR / "templates"], # Это убираем так как введи новый вид
+        "DIRS": [TEMPLATES_DIR],
         # это указывает Django искать шаблоны в папках приложений
         "APP_DIRS": True,
         "OPTIONS": {
@@ -84,6 +88,7 @@ WSGI_APPLICATION = "blogicum.wsgi.application"
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
 
+# Обычно тоже используют BASE_DIR:
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.sqlite3",
@@ -145,6 +150,9 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field
 
 STATICFILES_DIRS = [BASE_DIR / "static"]
+
+MEDIA_URL = "/media/"
+MEDIA_ROOT = BASE_DIR / "media"
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
