@@ -23,6 +23,7 @@ from pages import views as pages_views # временно для заглушк�
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+
     # главная лента из приложения blog
     path("", include("blog.urls", namespace="blog")),
     # статические страницы из приложения pages
@@ -30,11 +31,14 @@ urlpatterns = [
 
     # заглушка для проверки кастомных ошибок (временно заглушить регистрацию)
     # даст name='login' и пр.
+    # # Стандартные пути аутентификации: login/logout/password*
     path("auth/", include("django.contrib.auth.urls")),
-    # временная заглушка 
-    path("auth/registration/", pages_views.registration, name="registration"),
+
+    # Регистрация (по заданию)
+    path("auth/registration/", pages_views.RegistrationView.as_view(), name="registration"),
 ]
 
 handler404 = "pages.views.page_not_found"
 handler500 = "pages.views.server_error"
-handler403 = "pages.views.csrf_failure"
+# handler403 = "pages.views.csrf_failure"
+# handler403 не нужен для CSRF — он берётся из CSRF_FAILURE_VIEW

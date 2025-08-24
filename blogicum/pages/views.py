@@ -1,3 +1,6 @@
+from django.contrib.auth.forms import UserCreationForm
+from django.urls import reverse_lazy
+from django.views.generic import CreateView
 from django.shortcuts import render
 
 
@@ -23,10 +26,7 @@ def csrf_failure(request, reason=""):
     return render(request, "pages/403csrf.html", {"reason": reason}, status=403)
 
 
-# простая заглушка, чтобы шаблоны могли «развернуть» ссылку registration:
-def registration(request):
-    return render(request, "pages/registration.html")
-
-# временная заглушка для проверки ошибки 500
-def boom(request):
-    raise Exception("boom")
+class RegistrationView(CreateView):
+    form_class = UserCreationForm
+    template_name = "registration/registration_form.html"
+    success_url = reverse_lazy("blog:index") # после регистрации переходим на страницу входа
