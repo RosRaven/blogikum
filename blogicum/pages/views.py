@@ -29,4 +29,6 @@ def csrf_failure(request, reason=""):
 class RegistrationView(CreateView):
     form_class = UserCreationForm
     template_name = "registration/registration_form.html"
-    success_url = reverse_lazy("blog:index") # после регистрации переходим на страницу входа
+    
+    # после регистрации переходим на страницу входа
+    success_url = reverse_lazy("login") # ← так ожидают чаще всего

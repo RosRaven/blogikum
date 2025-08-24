@@ -29,7 +29,6 @@ urlpatterns = [
     # статические страницы из приложения pages
     path("pages/", include("pages.urls", namespace="pages")),
 
-    # заглушка для проверки кастомных ошибок (временно заглушить регистрацию)
     # даст name='login' и пр.
     # # Стандартные пути аутентификации: login/logout/password*
     path("auth/", include("django.contrib.auth.urls")),
@@ -40,5 +39,3 @@ urlpatterns = [
 
 handler404 = "pages.views.page_not_found"
 handler500 = "pages.views.server_error"
-# handler403 = "pages.views.csrf_failure"
-# handler403 не нужен для CSRF — он берётся из CSRF_FAILURE_VIEW
