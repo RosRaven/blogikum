@@ -10,3 +10,6 @@ POSTS_ON_MAIN = 5
 # Сколько символов отображать в __str__
 TITLE_REPL_MAX_LENGTH = 15
 NAME_REPL_MAX_LENGTH = 15
+
+# Количество постов на странице с профилем пользователя.
+POSTS_PER_PAGE = 10 
