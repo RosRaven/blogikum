@@ -12,6 +12,6 @@ urlpatterns = [
      # маршрут профиля (в namespace blog)
      path("profile/<str:username>/", views.profile, name="profile"),
 
-     # ВРЕМЕННО: заглушка для кнопки "Написать пост"
+     # маршрут для кнопки "Написать пост"
      path("posts/create/", views.post_create, name="create_post"),
 ]
