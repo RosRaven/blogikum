@@ -1,15 +1,14 @@
+from django.contrib.auth.decorators import login_required
 # возвращает активную модель пользователя
 from django.contrib.auth import get_user_model 
 from django.shortcuts import render, get_object_or_404, redirect
 
-from django.contrib.auth.decorators import login_required
 from django.utils import timezone
 
 from .constants import POSTS_ON_MAIN, POSTS_PER_PAGE 
 from .models import Post, Category
 from .utils import _get_base_queryset, get_paginated_posts
 from .forms import PostForm
-
 
 # Это защита - страница добавления публикации доступна только авторизованным
 @login_required
@@ -28,6 +27,28 @@ def post_create(request):
             return redirect("blog:profile", username=request.user.username)
     else:
         form = PostForm()
+    return render(request, "blog/create.html", {"form": form})
+
+
+@login_required
+def post_edit(request, post_id):
+    # 1) Берём пост по id (даже если автор не совпадает — чтобы знать, куда редиректить)
+    post = get_object_or_404(Post, pk=post_id)
+
+    # 2) Чужих отправляем на детальную страницу поста
+    if post.author != request.user:
+        return redirect("blog:post_detail", post_id=post_id)
+
+    # 3) Автор может редактировать
+    if request.method == "POST":
+        form = PostForm(request.POST, request.FILES, instance=post)
+        if form.is_valid():
+            form.save()
+            return redirect("blog:post_detail", post_id=post_id)
+    else:
+        form = PostForm(instance=post)
+
+    # используем тот же шаблон, что и для создания
     return render(request, "blog/create.html", {"form": form})
 
 
