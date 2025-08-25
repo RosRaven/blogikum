@@ -2,7 +2,8 @@
 from django.contrib.auth import get_user_model
 from django.db import models
 from django.db.models import CASCADE, SET_NULL
-from django.utils.translation import gettext_lazy as _  # делает метки и подсказки переводимыми.
+# делает метки и подсказки переводимыми.
+from django.utils.translation import gettext_lazy as _  
 
 from .constants import TITLE_MAX_LENGTH, NAME_MAX_LENGTH, TITLE_REPL_MAX_LENGTH, NAME_REPL_MAX_LENGTH
 
@@ -126,7 +127,14 @@ class Post(TimestampedModel):
         on_delete=SET_NULL,
         verbose_name=_("Категория")
     )
-    
+
+    image = models.ImageField(
+        upload_to='posts/',
+        verbose_name=_("Изображение"),
+        help_text=_("Загрузите изображение для публикации."),
+        blank=True, # чтобы поле было необязательным
+    )
+
     class Meta:
         # переводимые названия модели в единственном и множественном числе.
         verbose_name = _("публикация")
