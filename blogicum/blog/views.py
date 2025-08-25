@@ -1,13 +1,17 @@
-from django.contrib.auth import get_user_model # возвращает активную модель пользователя
-from django.contrib.auth.decorators import login_required
-from django.core.paginator import Paginator ###
-from django.http import HttpResponse # нужен только для заглушки — когда сделаем форму, этот импорт тоже можно убрать.
+# возвращает активную модель пользователя
+from django.contrib.auth import get_user_model 
 from django.shortcuts import render, get_object_or_404
+
+from django.contrib.auth.decorators import login_required
 from django.utils import timezone
+
+# нужен только для заглушки — когда сделаем форму, этот импорт тоже можно убрать.
+from django.http import HttpResponse 
 
 from .constants import POSTS_ON_MAIN, POSTS_PER_PAGE 
 from .models import Post, Category
-from .utils import _get_base_queryset
+from .utils import _get_base_queryset, get_paginated_posts
+
 
 @login_required # Это защита - страница добавления публикации доступна только авторизованным
 def post_create(request):
@@ -17,37 +21,38 @@ def post_create(request):
         status=501)
 
 
+def index(request):
+    qs = (_get_base_queryset()
+          .select_related("author", "category", "location"))
+    page_obj = get_paginated_posts(request, qs, POSTS_ON_MAIN)
+    context = {
+        "page_obj": page_obj,
+        "post_list": qs,
+    }
+    return render(request, "blog/index.html", context)
+
+
 def profile(request, username):
     # 1) находим пользователя по username или отдаём 404
     author = get_object_or_404(get_user_model(), username=username)
 
     # 2) собираем queryset постов этого автора (не «из будущего»)
-    posts = (Post.objects
-             .select_related("author", "category", "location")
-             .filter(author=author, pub_date__lte=timezone.now())
-             .order_by("-pub_date"))
-
-    # 3) если у модели есть флаг публикации — учитываем его
-    if any(f.name == "is_published" for f in Post._meta.fields):
-        posts = posts.filter(is_published=True)
+    qs = (_get_base_queryset()
+          .filter(author=author)
+          .select_related("author", "category", "location"))
 
     # 4) пагинация
-    paginator = Paginator(posts, POSTS_PER_PAGE)
-    page_obj = paginator.get_page(request.GET.get("page"))
+    page_obj = get_paginated_posts(request, qs, POSTS_PER_PAGE)
 
     # 5) контекст для шаблона
     context = {
         "author": author,         # привычное имя для шаблонов
         "profile": author,        # иногда тесты ждут именно 'profile'
         "page_obj": page_obj,     # данные и навигация пагинатора
+        "post_list": page_obj,    # совместимость со старыми инклюдами
         "is_owner": request.user.is_authenticated and request.user == author,
     }
     return render(request, "blog/profile.html", context)
-
-
-def index(request):
-    post_list = _get_base_queryset()[:POSTS_ON_MAIN]
-    return render(request, "blog/index.html", {"post_list": post_list})
 
 
 def post_detail(request, post_id):
@@ -71,15 +76,15 @@ def category_posts(request, category_slug):
                 is_published=True
                 )
             )
-    post_list = _get_base_queryset().filter(category=category)
+    qs = (_get_base_queryset()
+          .filter(category=category)
+          .select_related("author", "category", "location"))
     
+    page_obj = get_paginated_posts(request, qs, POSTS_PER_PAGE)
+    context = {"category": category, 
+               "page_obj": page_obj, 
+               "post_list": page_obj}
     return render(
         request, 
         "blog/category.html", 
-        {
-            "category": category,
-            "post_list": post_list
-        }
-    )
-
-
+        context)
