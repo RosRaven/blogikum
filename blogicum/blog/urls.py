@@ -15,4 +15,6 @@ urlpatterns = [
 
      # РЕДАКТИРОВАНИЕ
      path("posts/<int:post_id>/edit/", views.post_edit, name="edit_post"),
+
+     path("profile/edit/", views.edit_profile, name="edit_profile"),
 ]

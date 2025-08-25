@@ -8,7 +8,7 @@ from django.utils import timezone
 from .constants import POSTS_ON_MAIN, POSTS_PER_PAGE 
 from .models import Post, Category
 from .utils import _get_base_queryset, get_paginated_posts
-from .forms import PostForm
+from .forms import PostForm, UserEditForm
 
 # Это защита - страница добавления публикации доступна только авторизованным
 @login_required
@@ -99,6 +99,19 @@ def profile(request, username):
         "is_owner": is_owner,     # это мой профиль?
     }
     return render(request, "blog/profile.html", context)
+
+
+@login_required
+def edit_profile(request):
+    user = request.user
+    if request.method == "POST":
+        form = UserEditForm(request.POST, instance=user)
+        if form.is_valid():
+            form.save()
+            return redirect("blog:profile", username=user.username)
+    else:
+        form = UserEditForm(instance=user)
+    return render(request, "blog/edit_profile.html", {"form": form})
 
 
 def post_detail(request, post_id):
