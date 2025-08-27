@@ -21,7 +21,7 @@ from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import include, path
 
-from pages import views as pages_views # временно для заглушки
+from pages import views as pages_views
 
 
 urlpatterns = [
@@ -40,8 +40,8 @@ urlpatterns = [
     path("auth/registration/", pages_views.RegistrationView.as_view(), name="registration"),
 ]
 
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
-
 handler404 = "pages.views.page_not_found"
 handler500 = "pages.views.server_error"
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
