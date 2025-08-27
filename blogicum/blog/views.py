@@ -2,12 +2,11 @@
 from django.contrib.auth import get_user_model 
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
-
 from django.utils import timezone
 
 from .constants import POSTS_ON_MAIN, POSTS_PER_PAGE 
-from .forms import PostForm, EditUserForm
-from .models import Category, Post
+from .forms import PostForm, EditUserForm, CommentForm
+from .models import Category, Post, Comment
 from .utils import _get_base_queryset, get_paginated_posts
 
 def index(request):
@@ -107,14 +106,23 @@ def edit_profile(request):
 def post_detail(request, post_id):
     post = get_object_or_404(
         Post.objects
-            .filter(
-                id=post_id,
-                is_published=True,
-                pub_date__lte=timezone.now(),
-                category__is_published=True)
-            )
+        .select_related("author", "category", "location")
+        .filter(
+            id=post_id,
+            is_published=True,
+            pub_date__lte=timezone.now(),
+            category__is_published=True)
+        )
+    form = CommentForm() if request.user.is_authenticated else None
+
     
-    return render(request, "blog/detail.html", {"post": post})
+    comments = post.comments.select_related("author").order_by("created_at")
+
+    return render(
+        request, 
+        "blog/detail.html", 
+        {"post": post, "form": form, "comments": comments},
+    )
 
 
 # Это защита - страница добавления публикации доступна только авторизованным
@@ -157,3 +165,36 @@ def post_edit(request, post_id):
 
     # используем тот же шаблон, что и для создания
     return render(request, "blog/create.html", {"form": form})
+
+
+@login_required
+def add_comment(request, post_id):
+    post = get_object_or_404(Post, id=post_id)
+    form = CommentForm(request.POST or None)
+    if form.is_valid():
+        comment = form.save(commit=False)
+        comment.post = post
+        comment.author = request.user
+        comment.save()
+    # после добавления возвращаемся на страницу поста (якорь удобен, но не обязателен)
+    return redirect("blog:post_detail", post_id=post.id)
+
+@login_required
+def edit_comment(request, post_id, comment_id):
+    post = get_object_or_404(Post, id=post_id)
+    comment = get_object_or_404(Comment, id=comment_id, post=post)
+    if comment.author != request.user:
+        # править может только автор
+        return redirect("blog:post_detail", post_id=post.id)
+    form = CommentForm(request.POST or None, instance=comment)
+    if form.is_valid():
+        form.save()
+        return redirect("blog:post_detail", post_id=post.id)
+    # можно отрендерить ту же страницу поста с формой редактирования,
+    # но проще — отдельный небольшой шаблон
+    return render(
+        request,
+        "blog/comment_edit.html",
+        {"form": form, "post": post, "comment": comment},
+    )
+
