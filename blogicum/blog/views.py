@@ -168,33 +168,107 @@ def post_edit(request, post_id):
 
 
 @login_required
+def post_delete(request, post_id):
+    """Удаляет пост только его автору. Остальных — на просмотр поста."""
+    # пост должен существовать и быть видимым как обычно
+    post = get_object_or_404(
+        Post.objects.select_related("author", "category", "location").filter(
+            id=post_id,
+            pub_date__lte=timezone.now(),
+            category__is_published=True,
+        )
+    )
+    if post.author != request.user:
+        return redirect("blog:post_detail", post_id=post.id)
+
+    if request.method == "POST":
+        author_username = post.author.username
+        post.delete()
+        return redirect("blog:profile", author_username)
+
+    # подтверждение удаление — переиспользуем шаблон создания поста
+    return render(
+        request,
+        "blog/create.html",
+        {"post": post, "is_delete": True},
+    )
+
+
+@login_required
 def add_comment(request, post_id):
-    post = get_object_or_404(Post, id=post_id)
+    post = get_object_or_404(
+        Post.objects.filter(
+            id=post_id,
+            pub_date__lte=timezone.now(),
+            category__is_published=True,
+        )
+    )
     form = CommentForm(request.POST or None)
-    if form.is_valid():
+    if request.method == "POST" and form.is_valid():
         comment = form.save(commit=False)
         comment.post = post
         comment.author = request.user
         comment.save()
-    # после добавления возвращаемся на страницу поста (якорь удобен, но не обязателен)
-    return redirect("blog:post_detail", post_id=post.id)
-
+        return redirect("blog:post_detail", post_id=post.id)
+    # На GET тоже отрисуем ту же страницу формы
+    return render(
+        request,
+        "blog/comment.html",                  # не придумываем новый шаблон
+        {"post": post, "form": form},        # передаём form обязательно
+    )
+    
+    
 @login_required
 def edit_comment(request, post_id, comment_id):
-    post = get_object_or_404(Post, id=post_id)
-    comment = get_object_or_404(Comment, id=comment_id, post=post)
+    post = get_object_or_404(
+        Post.objects.filter(
+            id=post_id,
+            pub_date__lte=timezone.now(),
+            category__is_published=True,
+        )
+    )
+    comment = get_object_or_404(Comment.objects.select_related("author", "post"),
+                                id=comment_id, post=post)
+    
     if comment.author != request.user:
         # править может только автор
         return redirect("blog:post_detail", post_id=post.id)
+   
     form = CommentForm(request.POST or None, instance=comment)
-    if form.is_valid():
+    if request.method == "POST" and form.is_valid():
         form.save()
         return redirect("blog:post_detail", post_id=post.id)
     # можно отрендерить ту же страницу поста с формой редактирования,
     # но проще — отдельный небольшой шаблон
     return render(
         request,
-        "blog/comment_edit.html",
+        "blog/comment.html",
         {"form": form, "post": post, "comment": comment},
     )
 
+
+@login_required
+def delete_comment(request, post_id, comment_id):
+    """Удаляет комментарий только его автору. Остальных — на просмотр поста."""
+    post = get_object_or_404(
+        Post.objects.filter(
+            id=post_id,
+            pub_date__lte=timezone.now(),
+            category__is_published=True,
+        )
+    )
+    comment = get_object_or_404(Comment, id=comment_id, post=post)
+
+    if comment.author != request.user:
+        return redirect("blog:post_detail", post_id=post.id)
+
+    if request.method == "POST":
+        comment.delete()
+        return redirect("blog:post_detail", post_id=post.id)
+
+    # подтверждение удаления — переиспользуем шаблон комментария
+    return render(
+        request,
+        "blog/comment.html",
+        {"post": post, "comment": comment, "is_delete": True},
+    )
