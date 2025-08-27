@@ -21,19 +21,3 @@ class EditUserForm(forms.ModelForm):
         model = get_user_model()
         # Тесты редактируют ФИО — достаточно этих полей
         fields = ('username', 'first_name', 'last_name', 'email')
-
-
-# На всякий случай делаем алиас под альтернативное название,
-# если тест ищет EditUserForm — он тоже будет.
-# # Алиасы на все распространённые имена (на случай, если тест ищет конкретное имя)
-UserEditForm = EditUserForm
-EditProfileForm = EditUserForm
-ProfileEditForm = EditUserForm
-
-# Некоторые тестеры ожидают модульную переменную с именем Form
-Form = EditUserForm
-
-# И «геттер» — если тест ожидает функцию, которая вернёт класс формы.
-def get_user_edit_form(): return UserEditForm
-def get_edit_form(): return EditUserForm
-def get_form_cls(*args, **kwargs): return EditUserForm

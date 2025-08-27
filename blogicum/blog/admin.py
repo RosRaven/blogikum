@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Category, Location, Post
+from .models import Category, Location, Post, Comment
 
 
 # декоратор, регистрирует модель в админке.
@@ -41,3 +41,9 @@ class PostAdmin(admin.ModelAdmin):
     # # В PostAdmin можно расширить search_fields (("title", "text", "author__username")) 
     # search_fields = ("title", "text", "author__username")  # поиск по заголовку, тексту и имени автора
 
+
+class CommentAdmin(admin.ModelAdmin):
+    list_display = ("id", "post", "author", "created_at", )
+    search_fields = ("text", )
+    list_filter = ("created_at", )
+    

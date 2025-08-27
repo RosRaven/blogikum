@@ -6,7 +6,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 
 from .constants import POSTS_ON_MAIN, POSTS_PER_PAGE 
-from .forms import PostForm, UserEditForm
+from .forms import PostForm, EditUserForm
 from .models import Category, Post
 from .utils import _get_base_queryset, get_paginated_posts
 
@@ -93,7 +93,7 @@ def edit_profile(request):
     #     form = UserEditForm(instance=user)
     # return render(request, "blog/user_edit.html", {"form": form})
 
-    Form = UserEditForm
+    Form = EditUserForm
     if request.method == "POST":
         form = Form(request.POST, instance=request.user)
         if form.is_valid():
