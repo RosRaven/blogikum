@@ -2,7 +2,7 @@ from django import forms
 
 from django.contrib.auth import get_user_model
 
-from .models import Post
+from .models import Post, Comment
 
 # User = get_user_model()
 
@@ -14,6 +14,14 @@ class PostForm(forms.ModelForm):
             # Удобный ввод даты/времени (работает в современных браузерах)
             "pub_date": forms.DateTimeInput(attrs={"type": "datetime-local"}),
         }
+
+
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ('text',)
+        labels = {'text': 'Комментарий'}
+        widgets = {"text": forms.Textarea(attrs={"rows": 4})}
 
 
 class EditUserForm(forms.ModelForm):
