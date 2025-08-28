@@ -163,3 +163,10 @@ CSRF_FAILURE_VIEW = "pages.views.csrf_failure"
 LOGIN_URL = "login"
 LOGIN_REDIRECT_URL = "blog:index" # подставь своё имя урла главной
 LOGOUT_REDIRECT_URL = "blog:index"
+
+# Псевдо-отправка писем в файлы (для тестов и разработки)
+EMAIL_BACKEND = "django.core.mail.backends.filebased.EmailBackend"
+EMAIL_FILE_PATH = BASE_DIR / "sent_emails"
+
+# (необязательно, но удобно)
+DEFAULT_FROM_EMAIL = "no_reply@blogicum.local"
