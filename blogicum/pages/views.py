@@ -1,17 +1,17 @@
 from django.contrib.auth.forms import UserCreationForm
 from django.urls import reverse_lazy
-from django.views.generic import CreateView
+from django.views.generic import CreateView, TemplateView
 from django.shortcuts import render
 
 
-def about(request):
-    # Просто отдаём шаблон without any context
-    # (т.е. без дополнительных данных).
-    return render(request, "pages/about.html")
+# def about(request):
+#     # Просто отдаём шаблон without any context
+#     # (т.е. без дополнительных данных).
+#     return render(request, "pages/about.html")
 
 
-def rules(request):
-    return render(request, "pages/rules.html")
+# def rules(request):
+#     return render(request, "pages/rules.html")
 
 
 def page_not_found(request, exception):
@@ -32,3 +32,10 @@ class RegistrationView(CreateView):
     
     # после регистрации переходим на страницу входа
     success_url = reverse_lazy("login") # ← так ожидают чаще всего
+
+class AboutPage(TemplateView):
+    template_name = "pages/about.html"
+
+
+class RulesPage(TemplateView):
+    template_name = "pages/rules.html"
