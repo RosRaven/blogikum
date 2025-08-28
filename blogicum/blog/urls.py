@@ -6,12 +6,15 @@ app_name = "blog"
 
 urlpatterns = [
      path("", views.index, name="index"),
-     path("posts/<int:post_id>/", views.post_detail, name="post_detail"),
+
      path("category/<slug:category_slug>/", views.category_posts, name="category_posts"),
      
+     # === профиль ===
      path("profile/<str:username>/", views.profile, name="profile"),
-     path("profile/edit/", views.edit_profile, name="edit_profile"),
+     path("auth/edit/", views.edit_profile, name="edit_profile"),
 
+     # === посты ===
+     path("posts/<int:post_id>/", views.post_detail, name="post_detail"),
      path("posts/create/", views.post_create, name="create_post"),
      path("posts/<int:post_id>/edit/", views.post_edit, name="edit_post"),
      path("posts/<int:post_id>/delete/", views.post_delete, name="delete_post"),
