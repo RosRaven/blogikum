@@ -10,18 +10,18 @@ class PostForm(forms.ModelForm):
     class Meta:
         model = Post
         fields = ('title', 'text', 'pub_date', 'location', 'category', 'image')
-        widgets = {
-            # Удобный ввод даты/времени (работает в современных браузерах)
-            "pub_date": forms.DateTimeInput(attrs={"type": "datetime-local"}),
-        }
+        # widgets = {
+        #     # Удобный ввод даты/времени (работает в современных браузерах)
+        #     "pub_date": forms.DateTimeInput(attrs={"type": "datetime-local"}),
+        # }
 
 
 class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
         fields = ('text',)
-        labels = {'text': 'Комментарий'}
-        widgets = {"text": forms.Textarea(attrs={"rows": 4})}
+        # labels = {'text': 'Комментарий'}
+        # widgets = {"text": forms.Textarea(attrs={"rows": 4})}
 
 
 class EditUserForm(forms.ModelForm):

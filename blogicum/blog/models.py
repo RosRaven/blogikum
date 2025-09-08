@@ -144,7 +144,6 @@ class Post(TimestampedModel):
         return self.title[:TITLE_REPL_MAX_LENGTH]
 
 
-
 class Comment(models.Model):
     post = models.ForeignKey(
         Post,
@@ -167,11 +166,12 @@ class Comment(models.Model):
         verbose_name=_("Дата и время создания"),
         help_text=_("Дата и время создания комментария")
     )
-    updated_at = models.DateTimeField(
-        auto_now=True,
-        verbose_name=_("Дата и время изменения"),
-        help_text=_("Дата и время последнего изменения комментария")
-    )
+    # В  модели сейчас ещё есть updated_at. Убераю его.
+    # updated_at = models.DateTimeField(
+    #     auto_now=True,
+    #     verbose_name=_("Дата и время изменения"),
+    #     help_text=_("Дата и время последнего изменения комментария")
+    # )
 
     class Meta:
         verbose_name = _("Комментарий")
