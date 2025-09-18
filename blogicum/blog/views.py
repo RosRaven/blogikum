@@ -33,8 +33,10 @@ def category_posts(request, category_slug):
     qs = _get_base_queryset().filter(category=category)
     
     page_obj = get_paginated_posts(request, qs, POSTS_PER_PAGE)
-    context = {"category": category, 
-               "page_obj": page_obj,}
+    context = {
+        "category": category, 
+        "page_obj": page_obj,
+    }
     return render(request, "blog/category.html", context)
 
 
@@ -87,7 +89,11 @@ def edit_profile(request):
             return redirect("blog:profile", request.user.username)
     else:
         form = Form(instance=request.user)
-    return render(request, "blog/user_edit.html", {"form": form})
+
+    contex = {
+        "form": form,
+    }
+    return render(request, "blog/user_edit.html", contex)
 #  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
@@ -106,8 +112,12 @@ def post_detail(request, post_id):
         )
     comments = post.comments.select_related("author").order_by("created_at")
     form = CommentForm() if request.user.is_authenticated else None
-    context = {"post": post, "form": form, "comments": comments}
-    return render(request, "blog/detail.html", context,)
+    context = {
+        "post": post, 
+        "form": form, 
+        "comments": comments
+    }
+    return render(request, "blog/detail.html", context)
 
 
 @login_required
@@ -147,8 +157,11 @@ def post_edit(request, post_id):
     else:
         form = PostForm(instance=post)
 
+    context = {
+        "form": form,
+    }
     # используем тот же шаблон, что и для создания
-    return render(request, "blog/create.html", {"form": form})
+    return render(request, "blog/create.html", context)
 
 
 @login_required
@@ -170,12 +183,12 @@ def post_delete(request, post_id):
         post.delete()
         return redirect("blog:profile", author_username)
 
+    context = {
+        "post": post,
+        "is_delete": True
+    }
     # подтверждение удаление — переиспользуем шаблон создания поста
-    return render(
-        request,
-        "blog/create.html",
-        {"post": post, "is_delete": True},
-    )
+    return render(request, "blog/create.html", context)
 
 
 # @login_required
@@ -306,11 +319,13 @@ def add_comment(request, post_id):
     # Не валидно: просто показать ту же страницу поста с формой и ошибками.
     # (Это на прохождение текущих тестов не влияет, но поведение правильное.)
     comments = post.comments.select_related("author")
-    return render(
-        request, "blog/detail.html",
-        {"post": post, "form": form, "comments": comments},
-        status=200
-    )
+
+    context = {
+        "post": post, 
+        "form": form, 
+        "comments": comments,
+    }
+    return render(request, "blog/detail.html", context, status=200)
 
 
 @login_required
@@ -327,7 +342,13 @@ def edit_comment(request, post_id, comment_id):
             return redirect("blog:post_detail", post_id=post.id)
     else:
         form = CommentForm(instance=comment)
-    return render(request, "blog/comment.html", {"form": form, "post": post, "comment": comment})
+
+    context = {
+        "form": form, 
+        "post": post, 
+        "comment": comment
+    }
+    return render(request, "blog/comment.html", context)
 
 
 @login_required
