@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model 
 from django.contrib.auth.decorators import login_required
+from django.db.models import Count
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 
@@ -14,7 +15,8 @@ from django.views.decorators.http import require_POST
 def index(request):
     # Добавить количество комментариев к каждому посту
     qs = (_get_base_queryset()
-          .select_related("author", "category", "location"))
+          .select_related("author", "category", "location")
+          .annotate(comment_count=Count('comments')))
     page_obj = get_paginated_posts(request, qs, POSTS_PER_PAGE)
     context = {
         "page_obj": page_obj,
@@ -34,7 +36,8 @@ def category_posts(request, category_slug):
             )
     qs = (_get_base_queryset()
           .filter(category=category)
-          .select_related("author", "category", "location"))
+          .select_related("author", "category", "location")
+          .annotate(comment_count=Count('comments')))
     
     page_obj = get_paginated_posts(request, qs, POSTS_PER_PAGE)
     context = {"category": category, 
@@ -61,12 +64,14 @@ def profile(request, username):
         qs = (Post.objects
           .filter(author=author)
           .select_related("author", "category", "location")
+          .annotate(comment_count=Count('comments'))
           .order_by("-pub_date"))
     else:
         # собираем queryset постов этого автора (не «из будущего»)
         qs = (_get_base_queryset()
               .filter(author=author)
-              .select_related("author", "category", "location"))
+              .select_related("author", "category", "location")
+              .annotate(comment_count=Count('comments')))
     page_obj = get_paginated_posts(request, qs, POSTS_PER_PAGE)
     context = {
         "author": author,         # привычное имя для шаблонов
