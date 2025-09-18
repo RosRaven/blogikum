@@ -13,9 +13,7 @@ from django.views.decorators.http import require_POST
 
 
 def index(request):
-    # Добавить количество комментариев к каждому посту
-    qs = (_get_base_queryset()
-          .select_related("author", "category", "location"))
+    qs = _get_base_queryset()
     page_obj = get_paginated_posts(request, qs, POSTS_PER_PAGE)
     context = {
         "page_obj": page_obj,
@@ -25,7 +23,6 @@ def index(request):
 
 
 def category_posts(request, category_slug):
-    # Добавить количество комментариев к каждому посту
     category = get_object_or_404(
         Category.objects
             .filter(
@@ -33,18 +30,12 @@ def category_posts(request, category_slug):
                 is_published=True
                 )
             )
-    qs = (_get_base_queryset()
-          .filter(category=category)
-          .select_related("author", "category", "location")
-          )
+    qs = _get_base_queryset().filter(category=category)
     
     page_obj = get_paginated_posts(request, qs, POSTS_PER_PAGE)
     context = {"category": category, 
                "page_obj": page_obj,}
-    return render(
-        request, 
-        "blog/category.html", 
-        context)
+    return render(request, "blog/category.html", context)
 
 
 def profile(request, username):
@@ -53,9 +44,7 @@ def profile(request, username):
     Владельцу профиля показываем все его записи (включая будущие и снятые),
     остальным — только опубликованные и не «из будущего».
     """
-
-    # Добавить количество комментариев к каждому посту
-
+    
     author = get_object_or_404(get_user_model(), username=username)
     is_owner = request.user.is_authenticated and request.user == author
     if is_owner:
@@ -66,11 +55,8 @@ def profile(request, username):
           .annotate(comment_count=Count('comments')) # Подсчет комментариев
           .order_by("-pub_date"))
     else:
-        # собираем queryset постов этого автора (не «из будущего»)
-        qs = (_get_base_queryset()
-              .filter(author=author)
-              .select_related("author", "category", "location")
-            )
+        qs = _get_base_queryset().filter(author=author)
+
     page_obj = get_paginated_posts(request, qs, POSTS_PER_PAGE)
     context = {
         "author": author,         # привычное имя для шаблонов
@@ -121,14 +107,9 @@ def post_detail(request, post_id):
     comments = post.comments.select_related("author").order_by("created_at")
     form = CommentForm() if request.user.is_authenticated else None
     context = {"post": post, "form": form, "comments": comments}
-    return render(
-        request, 
-        "blog/detail.html", 
-        context,
-    )
+    return render(request, "blog/detail.html", context,)
 
 
-# Это защита - страница добавления публикации доступна только авторизованным
 @login_required
 def post_create(request):
     """
