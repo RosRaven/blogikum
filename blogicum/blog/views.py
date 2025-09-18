@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 
-from .constants import POSTS_ON_MAIN, POSTS_PER_PAGE 
+from .constants import POSTS_PER_PAGE 
 from .forms import PostForm, EditUserForm, CommentForm
 from .models import Category, Post, Comment
 from .utils import _get_base_queryset, get_paginated_posts
@@ -13,10 +13,9 @@ from django.views.decorators.http import require_POST
 
 def index(request):
     # Добавить количество комментариев к каждому посту
-    # POSTS_ON_MAIN = 5, возможно нужно передавать 10 как в пагинации
     qs = (_get_base_queryset()
           .select_related("author", "category", "location"))
-    page_obj = get_paginated_posts(request, qs, POSTS_ON_MAIN)
+    page_obj = get_paginated_posts(request, qs, POSTS_PER_PAGE)
     context = {
         "page_obj": page_obj,
         "post_list": qs,
