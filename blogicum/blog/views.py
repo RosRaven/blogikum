@@ -1,4 +1,3 @@
-# возвращает активную модель пользователя
 from django.contrib.auth import get_user_model 
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import get_object_or_404, redirect, render
@@ -13,6 +12,8 @@ from django.views.decorators.http import require_POST
 
 
 def index(request):
+    # Добавить количество комментариев к каждому посту
+    # POSTS_ON_MAIN = 5, возможно нужно передавать 10 как в пагинации
     qs = (_get_base_queryset()
           .select_related("author", "category", "location"))
     page_obj = get_paginated_posts(request, qs, POSTS_ON_MAIN)
@@ -24,6 +25,7 @@ def index(request):
 
 
 def category_posts(request, category_slug):
+    # Добавить количество комментариев к каждому посту
     category = get_object_or_404(
         Category.objects
             .filter(
@@ -37,8 +39,7 @@ def category_posts(request, category_slug):
     
     page_obj = get_paginated_posts(request, qs, POSTS_PER_PAGE)
     context = {"category": category, 
-               "page_obj": page_obj, 
-               "post_list": page_obj}
+               "page_obj": page_obj,}
     return render(
         request, 
         "blog/category.html", 
@@ -52,11 +53,10 @@ def profile(request, username):
     остальным — только опубликованные и не «из будущего».
     """
 
-    # 1) находим пользователя по username или отдаём 404
+    # Добавить количество комментариев к каждому посту
+
     author = get_object_or_404(get_user_model(), username=username)
     is_owner = request.user.is_authenticated and request.user == author
-
-    # 2) 
     if is_owner:
         # Все посты автора, без ограничений по публикации/дате
         qs = (Post.objects
@@ -68,16 +68,11 @@ def profile(request, username):
         qs = (_get_base_queryset()
               .filter(author=author)
               .select_related("author", "category", "location"))
-
-    # 4) пагинация
     page_obj = get_paginated_posts(request, qs, POSTS_PER_PAGE)
-
-    # 5) контекст для шаблона
     context = {
         "author": author,         # привычное имя для шаблонов
         "profile": author,        # иногда тесты ждут именно 'profile'
         "page_obj": page_obj,     # данные и навигация пагинатора
-        "post_list": page_obj,    # совместимость со старыми инклюдами
         "is_owner": is_owner,     # это мой профиль?
     }
     return render(request, "blog/profile.html", context)
@@ -108,6 +103,9 @@ def edit_profile(request):
 
 
 def post_detail(request, post_id):
+    # Добавить количество комментариев к посту
+    # Отбор комментариев берем по модели комментариев (сейчас из поста)
+    # Создание формы не понятно
     post = get_object_or_404(
         Post.objects
         .select_related("author", "category", "location")
@@ -117,15 +115,13 @@ def post_detail(request, post_id):
             pub_date__lte=timezone.now(),
             category__is_published=True)
         )
-    form = CommentForm() if request.user.is_authenticated else None
-
-    
     comments = post.comments.select_related("author").order_by("created_at")
-
+    form = CommentForm() if request.user.is_authenticated else None
+    context = {"post": post, "form": form, "comments": comments}
     return render(
         request, 
         "blog/detail.html", 
-        {"post": post, "form": form, "comments": comments},
+        context,
     )
 
 

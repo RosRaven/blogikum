@@ -5,7 +5,9 @@ TITLE_MAX_LENGTH = 256
 NAME_MAX_LENGTH = 256
 
 # Количество постов на главной странице.
-POSTS_ON_MAIN = 5
+# Ранее было 5, теперь 10 - нужно для прохождения тестов
+POSTS_ON_MAIN = 10
+
 
 # Сколько символов отображать в __str__
 TITLE_REPL_MAX_LENGTH = 15
