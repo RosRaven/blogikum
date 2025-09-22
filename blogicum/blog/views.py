@@ -23,13 +23,11 @@ def index(request):
 
 
 def category_posts(request, category_slug):
-    category = get_object_or_404(
-        Category.objects
-            .filter(
-                slug=category_slug, 
-                is_published=True
-                )
-            )
+    category = get_object_or_404(Category, 
+                                 slug=category_slug, 
+                                 is_published=True)
+
+    # Все посты в этой категории
     qs = _get_base_queryset().filter(category=category)
     
     page_obj = get_paginated_posts(request, qs, POSTS_PER_PAGE)
@@ -54,7 +52,7 @@ def profile(request, username):
         qs = (Post.objects
           .filter(author=author)
           .select_related("author", "category", "location")
-          .annotate(comment_count=Count('comments')) # Подсчет комментариев
+          .annotate(comment_count=Count('comments'))
           .order_by("-pub_date"))
     else:
         qs = _get_base_queryset().filter(author=author)
@@ -103,13 +101,13 @@ def post_detail(request, post_id):
     # Создание формы не понятно
     post = get_object_or_404(
         Post.objects
-        .select_related("author", "category", "location")
         .filter(
             id=post_id,
             is_published=True,
             pub_date__lte=timezone.now(),
             category__is_published=True)
-        )
+        .select_related("author", "category", "location")
+    )
     comments = post.comments.select_related("author").order_by("created_at")
     form = CommentForm() if request.user.is_authenticated else None
     context = {
@@ -169,11 +167,11 @@ def post_delete(request, post_id):
     """Удаляет пост только его автору. Остальных — на просмотр поста."""
     # пост должен существовать и быть видимым как обычно
     post = get_object_or_404(
-        Post.objects.select_related("author", "category", "location").filter(
+        Post.objects.filter(
             id=post_id,
             pub_date__lte=timezone.now(),
             category__is_published=True,
-        )
+        ).select_related("author", "category", "location")
     )
     if post.author != request.user:
         return redirect("blog:post_detail", post_id=post.id)
