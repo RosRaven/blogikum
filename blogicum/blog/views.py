@@ -1,3 +1,4 @@
+from django.http import Http404
 from django.contrib.auth import get_user_model 
 from django.contrib.auth.decorators import login_required
 from django.db.models import Count
@@ -348,19 +349,17 @@ def add_comment(request, post_id):
 
 @login_required
 def edit_comment(request, post_id, comment_id):
-    post = get_object_or_404(Post, id=post_id)
+    """Редактирование комментария."""
+    post = get_object_or_404(Post, pk=post_id)
     comment = get_object_or_404(
-        Comment.objects.select_related("post", "author"),
-        id=comment_id, post=post, author=request.user
-    )
-    if request.method == "POST":
-        form = CommentForm(request.POST, instance=comment)
-        if form.is_valid():
-            form.save()
-            return redirect("blog:post_detail", post_id=post.id)
-    else:
-        form = CommentForm(instance=comment)
-
+        Comment,
+        pk=comment_id, post=post)
+    if comment.author != request.user:
+        raise Http404
+    form = CommentForm(request.POST or None, instance=comment)
+    if request.method == "POST" and form.is_valid():
+        form.save()
+        return redirect("blog:post_detail", post_id=post.id)
     context = {
         "form": form, 
         "post": post, 
@@ -370,11 +369,18 @@ def edit_comment(request, post_id, comment_id):
 
 
 @login_required
-# @require_POST
 def delete_comment(request, post_id, comment_id):
-    post = get_object_or_404(Post, id=post_id)
+    """Удаление комментария."""
+    post = get_object_or_404(Post, pk=post_id)
     comment = get_object_or_404(
-        Comment, id=comment_id, post=post, author=request.user
-    )
-    comment.delete()
-    return redirect("blog:post_detail", post_id=post.id)
+        Comment, pk=comment_id, post=post)
+    if comment.author != request.user:
+        raise Http404
+    if request.method == "POST":
+        comment.delete()
+        return redirect("blog:post_detail", post_id=post.id)
+    context = {
+            "post": post, 
+            "comment": comment,
+        }
+    return render(request, "blog/comment.html", context)
