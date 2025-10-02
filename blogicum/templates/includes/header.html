@@ -24,10 +24,22 @@
                   href="{% url 'blog:create_post' %}">Написать пост</a></button>
               <button type="button" class="btn btn-outline-primary"><a class="text-decoration-none text-reset"
                   href="{% url 'blog:profile' user.username %}">{{ user.username }}</a></button>
+              <!-- Старый вариант. Он лучше, но пока убираем -->
               <form method="post" action="{% url 'logout' %}" class="d-inline">
                 {% csrf_token %}
                 <button type="submit" class="btn btn-outline-primary">Выйти</button>
               </form>
+
+              <!-- Это новая версия от Практикуму.  обычная GET-ссылка на /logout/. 
+               регресс по безопасности: GET-запросы не должны менять состояние, и их проще «подтолкнуть» извне
+               В новом варианте CSRF не задействуется (GET), так что 403 за CSRF — исключён, но это как раз минус безопасности.
+               -->
+               <!-- Нужно чтобы прошли тесты
+                tests/test_users.py::test_profile FAILED
+                tests/test_comment.py::test_404_on_comment_deleted_post FAILED 
+                 -->
+              <!-- <button type="button" class="btn btn-outline-primary"><a class="text-decoration-none text-reset"
+                  href="{% url 'logout' %}">Выйти</a></button> -->
             </div>
           {% else %}
             <div class="btn-group" role="group" aria-label="Basic outlined example">
