@@ -5,7 +5,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 
 from .constants import POSTS_PER_PAGE 
-from .forms import PostForm, EditUserForm, CommentForm
+from .forms import PostForm, UserEditForm, CommentForm
 from .models import Category, Post, Comment
 from .utils import _get_base_queryset, get_paginated_posts
 
@@ -60,23 +60,40 @@ def profile(request, username):
     return render(request, "blog/profile.html", context)
 
 
+# @login_required
+# def edit_profile(request):
+#     form = UserEditForm(request.POST or None, instance=request.user)
+#     if form.is_valid():
+#         form.save()
+#         return redirect("blog:profile", request.user.username)
+
+#     contex = {
+#         "form": form,
+#     }
+#     return render(request, "blog/user.html", contex)
+# #  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+# Это другая версия edit_profile, тут добавлена проверка, что юзер
+# не может редактировать чужой профиль. 
+# Только она безсмысленна ведь проверка есть в шаблонах...
 @login_required
 def edit_profile(request):
+    User = get_user_model()
+    user_obj = get_object_or_404(User, username=request.user.username)
 
-    Form = EditUserForm
-    if request.method == "POST":
-        form = Form(request.POST, instance=request.user)
-        if form.is_valid():
-            form.save()
-            return redirect("blog:profile", request.user.username)
-    else:
-        form = Form(instance=request.user)
+    # Нельзя редактировать чужой профиль
+    if user_obj != request.user:
+        return redirect("blog:profile", username=user_obj.username)
 
-    contex = {
-        "form": form,
-    }
-    return render(request, "blog/user.html", contex)
-#  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    form = UserEditForm(request.POST or None, instance=user_obj)
+    if form.is_valid():
+        form.save()
+        return redirect("blog:profile", username=user_obj.username)
+
+    return render(request, "blog/user.html", {"form": form})
+
+
 
 
 def post_detail(request, post_id):

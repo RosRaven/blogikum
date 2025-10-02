@@ -4,7 +4,7 @@ from django.contrib.auth import get_user_model
 
 from .models import Post, Comment
 
-# User = get_user_model()
+User = get_user_model()
 
 class PostForm(forms.ModelForm):
     class Meta:
@@ -20,12 +20,9 @@ class CommentForm(forms.ModelForm):
     class Meta:
         model = Comment
         fields = ('text',)
-        # labels = {'text': 'Комментарий'}
-        # widgets = {"text": forms.Textarea(attrs={"rows": 4})}
 
 
-class EditUserForm(forms.ModelForm):
+class UserEditForm(forms.ModelForm):
     class Meta:
-        model = get_user_model()
-        # Тесты редактируют ФИО — достаточно этих полей
+        model = User
         fields = ('username', 'first_name', 'last_name', 'email')

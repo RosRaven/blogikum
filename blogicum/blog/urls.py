@@ -10,8 +10,11 @@ urlpatterns = [
      path("category/<slug:category_slug>/", views.category_posts, name="category_posts"),
      
      # === профиль ===
+     # Попытался сделать универсальный урл для редактирования профиля,
+     # но не получилось, поэтому оставил оба варианта.
+     # path("profile/<str:username>/edit/", views.edit_profile, name="edit_profile"),
+     path("profile/edit/", views.edit_profile, name="edit_profile"),
      path("profile/<str:username>/", views.profile, name="profile"),
-     path("auth/edit/", views.edit_profile, name="edit_profile"),
 
      # === посты ===
      path("posts/<int:post_id>/", views.post_detail, name="post_detail"),
